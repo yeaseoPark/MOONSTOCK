@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-import os
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1fll2*xhaqiy&42ov)5&*#1b(wwlhrnnd_7bm)=n9prc(uy6hg'
+SECRET_KEY = 'django-insecure-9p+tmmcbi4+e545hpf7@g657jw+vxdw-l9bv2r8nmks@n&xm)r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,9 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'preSignIn.apps.PresigninConfig',
-    'sass_processor',
-    'invItemMgmt.apps.InvitemmgmtConfig'
+    'common.apps.CommonConfig',
+    'metaData.apps.MetadataConfig',
 ]
 
 MIDDLEWARE = [
@@ -118,30 +117,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+# CSS 및 부트스트랩 경로 설정
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-]
-
-# SCSS 적용
-SASS_OUTPUT_STYLE = 'compact'
-SASS_PROCESSOR_ENABLED = True
-SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'static')
-
-STATICFILES_FINDERS  = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'sass_processor.finders.CssFinder',
 ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'preSignIn.User'
+
+# 로그인 모델 설정
+AUTH_USER_MODEL = 'common.User'
 
 # 로그인 성공후 이동하는 URL
-LOGIN_REDIRECT_URL = 'invItemMgmt:inventoryIndex'
+LOGIN_REDIRECT_URL = 'metaData:endItemIndex'
 
 # 로그아웃시 이동하는 URL
-LOGOUT_REDIRECT_URL = 'preSignIn:login'
+LOGOUT_REDIRECT_URL = 'common:login'

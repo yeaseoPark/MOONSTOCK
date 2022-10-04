@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="wrapper">
+    <div class="content" style="background-color:rgba(0, 0, 0, 0.4);">
+        <p style="text-align:center; color: white;">
+            Come Here and Enjoy your <strong style="color: #0d6efd;">MOONSTOCK</strong>
+            <br/>
+        </p>
+        <p style="text-align:center; color: white;font-size:20px">
+            Cheap and efficient inventory management platform.
+            <br/>
+        </p>
+
+        <form method="post" action="{% url 'common:login' %}">
+            {% csrf_token %}
+            <div style="margin:10px">
+                <input class="form-control" type="text" name="username" id="username"
+                       placeholder="Enter your ID" required>
+            </div>
+
+            <div style="margin:10px">
+                <input class="form-control" type="password" name="password" id="password"
+                       placeholder="Enter your password" required>
+            </div>
+
+            <div class="d-grid gap-2" style="margin:10px">
+                <input class="btn btn-primary" type="submit" value="SIGN IN"/>
+            </div>
+
+            {% if form.errors %}
+            <div style="color:#0d6efd; font-size:x-small; margin:10px;text-align:center;">
+                {% for field in form %}
+                {% for error in field.errors %}  <!-- 필드 오류를 출력한다. -->
+                <div>
+                    <strong>{{ field.label }}</strong><br/>
+                    {{ field.errors }}
+                </div>
+                {% endfor %}
+                {% endfor %}
+                <br/>
+                {% for error in form.non_field_errors %}   <!-- 넌필드 오류를 출력한다. -->
+                <div>
+                    <strong>{{ error }}</strong>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </form>
+        <p style="text-align:center; color: white; font-size:medium ;">
+            <br/>
+            If you are not our member, Please <a href="{% url 'common:signup' %}">sign up!</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

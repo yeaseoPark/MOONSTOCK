@@ -6,7 +6,7 @@
             <strong>MOONSTOCK</strong>
         </a>
         {% else %}
-        <a class="navbar-brand" href="{% url 'preSignIn:login' %}">
+        <a class="navbar-brand" href="{% url 'common:login' %}">
             <i class="fa-solid fa-moon" tyle="color:white"></i>
             <strong>MOONSTOCK</strong>
         </a>
@@ -20,18 +20,17 @@
 
         {% if user.is_authenticated %}
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'preSignIn:login' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">My Page</a>
+                    <a class="nav-link active" aria-current="page" href="#">Meta Data</a>
                 </li>
             </ul>
+
             <div class="d-flex">
 
 
-                <button type="button" class="btn btn-primary " onclick="location.href='{% url 'preSignIn:logout' %}' ">
+                <button type="button" class="btn btn-primary " onclick="location.href='{% url 'common:logout' %}' ">
                     <strong style="color:white;">
                         ({{ user.username }}) SIGN OUT
                     </strong>
