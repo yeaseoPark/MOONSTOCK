@@ -1,0 +1,67 @@
+i {
+    background-color: #0d6efd;
+    border-radius: 50%;
+    border: 1px solid #0d6efd;
+    padding: 10px;
+}
+
+
+.wrapper {
+  padding:min(5%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+}
+
+.content {
+  font-family: system-ui, serif;
+  font-size: 2rem;
+  padding: 3rem;
+  border-radius: 1rem;
+  background-color:rgba(0, 0, 0, 0.4);
+  color: white;
+  text-align:center;
+}
+
+
+body {
+        margin: 0;
+        background: linear-gradient(
+            to bottom,
+            rgba(20, 20, 20, 0) 10%,
+            rgba(20, 20, 20, 0.25) 25%,
+            rgba(20, 20, 20, 0.5) 50%,
+            rgba(20, 20, 20, 0.75) 75%,
+            rgba(20, 20, 20, 1) 180%
+          ), url(./img/mainPage_moon.jpg);
+        background-size: cover;
+        background-repeat:no-repeat;
+      }
+
+table {
+    font-size: x-small;
+    text-align : center;
+    border-collapse: collapse;
+    border-radius: 1rem;
+    color:white;
+}
+tr {
+   color:white;
+}
+th {
+    color:#0d6efd;
+}
+
+.table-hover tbody tr:hover td {
+    background: rgba(0, 0, 0, 0.5);
+    color:#0d6efd;
+}
+
+.itemNote {
+    text-align : left;
+}
+
+
+
+

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="wrapper">
+
+
+    <br/>
+    <div class="content" style="background-color:rgba(0, 0, 0, 0.4); text-align:left;">
+        <form method="post" action="{% url 'common:signup' %}" style="color: white;font-size:medium;">
+            <h1 style="text-align:center">Sign Up</h1>
+            <br/>
+            {%csrf_token%}
+            <div style="display:flex">
+                <div id="userInfo" style="padding-right:2%">
+                    ▶ Authentication Information
+                    <br/>
+                    <label for="username" class="col-sm-2 col-form-label">User ID </label>
+                    <input type="text" id="username" name="username" value="{{form.username.value|default_if_none:''}}"
+                           class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+                    {% if form.username.errors %}
+                    <strong style="font-size:x-small; color:#dc3545;">
+                        {{ form.username.errors }}
+                    </strong>
+                    {% endif %}
+
+                    <div style="display:flex;">
+                        <div style="width:45%">
+                            <label for="password1" class="col col-form-label">Password</label>
+                            <input type="password" id="password1" name="password1"
+                                   value="{{form.password1.value|default_if_none:''}}"
+                                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+                        </div>
+                        <div style="width:10%"></div>
+
+                        <div style="width:45%">
+                            <label for="password2" class="col col-form-label">Password Confirm</label>
+                            <input type="password" id="password2" name="password2"
+                                   value="{{form.password2.value|default_if_none:''}}"
+                                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+
+                        </div>
+                    </div>
+                    {% if form.password1.errors %}
+                    <strong style="font-size:x-small; color:#dc3545;">
+                        {{ form.password1.errors }}
+                    </strong>
+                    {% endif %}
+                    {% if form.password2.errors %}
+                    <strong style="font-size:x-small; color:#dc3545;">
+                        {{ form.password2.errors }}
+                    </strong>
+                    {% endif %}
+
+                    <label for="email" class="col-sm-2 col-form-label">E-mail</label>
+                    <input type="text" id="email" name="email" value="{{form.email.value|default_if_none:''}}"
+                           class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+
+                    {% if form.email.errors %}
+                    <strong style="font-size:x-small; color:#dc3545;">
+                        {{ form.email.errors }}
+                    </strong>
+                    {% endif %}
+                </div>
+
+                <div id="businessInfo" style="padding-left:2%">
+                    ▶ Business Information
+                    <br/>
+                    <div style="display:flex">
+                        <div style="width:45%">
+                            <label for="company_name" class="col col-form-label">Company Name</label>
+                            <input type="text" id="company_name" name="company_name"
+                                   value="{{form.company_name.value|default_if_none:''}}"
+                                   class="form-control form-control-sm mb-2"
+                                   aria-label=".form-control-sm">
+                            {% if form.company_name.errors %}
+                            <strong style="font-size:x-small; color:#dc3545;">
+                                {{ form.company_name.errors }}
+                            </strong>
+                            {% endif %}
+                        </div>
+                        <div style="width:10%">
+                        </div>
+                        <div style="width:45%;">
+                            <label for="company_sector" class="col col-form-label">Complany Sector</label>
+                            <select name="company_sector" id="company_sector" class="form-select form-select-sm mb-2"
+                                    aria-label=".form-select-sm example">
+                                <option selected disabled>Open this select menu</option>
+                                {% for sector in form.company_sector.field.choices %}
+                                <option value="{{ sector.0 }}"
+                                        {% if sector.0 == form.company_sector.value %} checked {% endif %}>
+                                    {{ sector.1 }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.company_sector.errors %}
+                            <strong style="font-size:x-small; color:#dc3545;">
+                                {{ form.company_sector.errors }}
+                            </strong>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                    <label for="company_phone" class="col col-form-label">Company Phone Number</label>
+                    <input type="text" id="company_phone" name="company_phone"
+                           value="{{form.company_phone.value|default_if_none:''}}"
+                           class="form-control form-control-sm mb-2"
+                           aria-label=".form-control-sm">
+
+                    {% if form.company_phone.errors %}
+                    <strong style="font-size:x-small; color:#dc3545;">
+                        {{ form.company_phone.errors }}
+                    </strong>
+                    {% endif %}
+
+                    <label for="company_address" class="col col-form-label">Company Address</label>
+                    <input type="text" id="company_address" name="company_address"
+                           value="{{form.company_address.value|default_if_none:''}}"
+                           class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+
+                    {% if form.company_address.errors %}
+                    <strong style="font-size:x-small; color:#dc3545;">
+                        {{ form.company_address.errors }}
+                    </strong>
+                    {% endif %}
+
+
+                    <label for="representative_name" class="col col-form-label">Representative Name</label>
+                    <input type="text" id="representative_name" name="representative_name"
+                           value="{{form.representative_name.value|default_if_none:''}}"
+                           class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+
+                    {% if form.representative_name.errors %}
+                    <strong style="font-size:x-small; color:#dc3545;">
+                        {{ form.representative_name.errors }}
+                    </strong>
+                    {% endif %}
+
+
+                    <label for="representative_phone" class="col col-form-label">Representative Phone Number</label>
+                    <input type="text" id="representative_phone" name="representative_phone"
+                           value="{{form.representative_phone.value|default_if_none:''}}"
+                           class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+
+                    {% if form.representative_phone.errors %}
+                    <strong style="font-size:x-small; color:#dc3545;">
+                        {{ form.representative_phone.errors }}
+                    </strong>
+                    {% endif %}
+                </div>
+            </div>
+            <br/>
+            <div class="d-grid gap-2" style="margin:10px">
+                <button type="submit" class="btn btn-primary">SUBMIT</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

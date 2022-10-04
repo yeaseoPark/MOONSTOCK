@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MOONSTOCK</title>
+    <!-- fontAwesome 불러오기 : 아이콘 -->
+    <script src="https://kit.fontawesome.com/e420353eb3.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<!-- Static 요소 -->
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+<script src="{% static 'bootstrap.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'style1.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'bootStrapModify.css' %}">
+
+<!-- Navbar 시작 -->
+
+{% include "navbar.html" %}
+
+<!-- 블록 컨텐츠 -->
+{% block content %}
+
+{% endblock %}
+
+</body>
+</html>

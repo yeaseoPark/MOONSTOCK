@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load metaDataFilter %}
+{% block content %}
+
+{% include 'metaData/navbar.html' %}
+
+<div class="wrapper">
+
+
+    <div class="content" style="width:80%; text-align:left;">
+
+        <!-- End Item 테이블 보여주기 시작 -->
+
+        <div>
+            <div style="float:left; text-align:center;"><h2> ▶ End Item</h2></div>
+            <div style="float:right;">
+                <div class="input-group">
+                    <input type="text" class="form-control form-control-sm" placeholder="Search"
+                           aria-label="Search Engine" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-primary" type="button" id="button-addon2">Search</button>
+                </div>
+
+            </div>
+        </div>
+        <br/>
+
+        <div style="padding-bottom:20px; padding-top:20px">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                <th style="width:5%">No.</th>
+                <th style="width:10%">Code</th>
+                <th style="width:15%">Name</th>
+                <th style="15%">Price</th>
+                <th>Note</th>
+                <th width="15%">Registration Date</th>
+                </thead>
+
+                <tbody>
+                {% for item in endItem_list %}
+                <tr>
+                    <td>{{ endItem_list.paginator.count|sub:endItem_list.start_index|sub:forloop.counter0|add:1 }}</td>
+                    <td>{{item.code}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.price}}</td>
+                    <td class="itemNote">{{item.note}}</td>
+                    <td>{{item.registration_date}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- End Item 테이블 보여주기 끝 -->
+
+        <!-- 페이징 처리 시작 -->
+        <ul class="pagination justify-content-center pagination-sm">
+            <!-- 이전페이지 -->
+            {% if endItem_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ endItem_list.previous_page_number }}" width="30%">◀</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#" width="30%">◀</a>
+            </li>
+            {% endif %}
+            <!-- 페이지리스트 -->
+            {% for page_number in endItem_list.paginator.page_range %}
+            {% if page_number >= endItem_list.number|add:-5 and page_number <= endItem_list.number|add:5 %}
+            {% if page_number == endItem_list.number %}
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            </li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+            <!-- 다음페이지 -->
+            {% if endItem_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ endItem_list.next_page_number }}">▶</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">▶</a>
+            </li>
+            {% endif %}
+        </ul>
+        <!-- 페이징 처리 끝 -->
+    </div>
+
+</div>
+
+{% endblock %}
