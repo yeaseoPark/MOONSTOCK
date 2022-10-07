@@ -1,4 +1,5 @@
 from django.db import models
+from treebeard.mp_tree import MP_Node
 from django.utils import timezone
 
 from common.models import User
@@ -6,7 +7,7 @@ from common.models import User
 
 # Create your models here.
 # 인벤토리 Item 테이블
-class Item(models.Model):
+class Item(MP_Node):
     # 인벤토리 주인(유저별 관리)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
     # 등록 코드
@@ -21,11 +22,26 @@ class Item(models.Model):
     price = models.IntegerField(null=False, blank=False, default=0)
     # 비고
     note = models.TextField(null=True, blank=True)
+    # parent 를 만드는데 필요한 수량
+    required = models.IntegerField(null=False, blank=False, default=0)
 
     def __str__(self):
         return self.code + ":" + self.name
 
+    def get_previous(self):
+        if not self.is_root():
+            return self.get_prev_sibling()
+
+    def get_next(self):
+        if not self.is_root():
+            return self.get_next_sibling()
+
+    def get_is_root(self):
+        return self.is_root()
+
+
 # end item 을 구성하는 BOM 테이블
+"""
 class BOM(models.Model):
     # end item : 최종 만들어지는 item
     end_item = models.ForeignKey(Item, null=False, blank=False, on_delete=models.CASCADE, related_name='end_item')
@@ -41,7 +57,7 @@ class BOM(models.Model):
     def __str__(self):
         return self.end_item +'('+ str(self.level) + ")"
 
-
+"""
 
 
 

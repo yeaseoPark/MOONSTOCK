@@ -38,7 +38,7 @@ def endItem_add(request):
             else:
                 endItem.is_endItem = True
                 endItem.user = request.user
-                endItem.save()
+                Item.add_root(instance = endItem)
                 return redirect('metaData:endItemIndex')
     else:
         form = ItemForm()
@@ -88,12 +88,17 @@ BOM views
 @login_required(login_url='common:login')
 def bomIndex(request):
     endItem_list = Item.objects.filter(Q(is_endItem__exact = True) & Q(user__exact = request.user))
-    bomOrderList = list()
-    for endItem in endItem_list:
-        bom = BOM.objects.filter(Q(end_item__exact = endItem)).order_by('level')
-        bomOrderList.append(bom)
 
-    context = {'bomOrderList' : bomOrderList}
+    bom_list = list()
+    for endItem in endItem_list:
+        bom = Item.get_tree(endItem)
+        bom_list.append(bom)
+
+
+
+
+    context = {'endItem_list':endItem_list, 'bom_list':bom_list, 'annotated_list': Item.get_annotated_list()}
+
     return render(request, 'metaData/BOM/bomIndex.html', context)
 
 

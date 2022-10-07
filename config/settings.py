@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'treebeard',
     'common.apps.CommonConfig',
     'metaData.apps.MetadataConfig',
 ]

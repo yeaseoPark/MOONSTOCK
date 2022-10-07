@@ -8,7 +8,13 @@
 <div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
     <div class="content" style="width:80%; text-align:left; min-height:80vh;">
 
-
+        {% for item, info in annotated_list %}
+        <script type="text/javascript">
+            var inputBlank = "&nbsp;&nbsp; &nbsp;&nbsp;".repeat({{ info.level }});
+            document.write(inputBlank);
+        </script> ─ [{{item.code}}] {{ item.name }}
+        <br/>
+        {% endfor %}
     </div>
 
 </div>
