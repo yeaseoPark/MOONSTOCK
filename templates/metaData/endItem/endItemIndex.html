@@ -3,31 +3,20 @@
 {% block content %}
 
 {% include 'metaData/navbar.html' %}
+{% include 'metaData/searchTab.html' %}
 
-<div class="wrapper">
-
-
-    <div class="content" style="width:80%; text-align:left;">
+<div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
+    <div class="content" style="width:80%; text-align:left; min-height:80vh;">
 
         <!-- End Item 테이블 보여주기 시작 -->
-        ▶ End Item
 
         <div>
             <div style="float:left; text-align:center; display:flex;">
 
-
-                <!-- Search 창 만들기 시작 -->
-
-                <div class="input-group">
-                    <input type="text" class="form-control form-control-sm" placeholder="Search" id="search_kw"
-                           aria-label="Search Engine" aria-describedby="button-addon2"
-                           value="{{kw|default_if_none:''}}">
-                    <button class="btn btn-outline-primary" type="button" id="btn_search">Search</button>
-                </div>
-                <!-- Search 창 만들기 시작 -->
+                <h2> ▶ End Item</h2>
             </div>
             <div style="float:right;">
-                <a class="btn btn-primary btn-sm" style="display:top;"> ADD</a>
+                <a class="btn btn-primary btn-sm" style="display:top;" href="{%url 'metaData:endItem_add'%}"> ADD</a>
             </div>
         </div>
         <br/>
@@ -36,23 +25,29 @@
             <table class="table table-hover">
                 <thead class="table-dark">
                 <th style="width:5%">No.</th>
-                <th style="width:10%">Code</th>
-                <th style="width:15%">Name</th>
-                <th style="15%">Price</th>
-                <th>Note</th>
-                <th width="15%">Registration Date</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Registration Date</th>
+                <th>Detail</th>
                 </thead>
 
                 <tbody>
                 {% for item in endItem_list %}
-                <tr>
-                    <td>{{ endItem_list.paginator.count|sub:endItem_list.start_index|sub:forloop.counter0|add:1 }}</td>
-                    <td>{{item.code}}</td>
-                    <td>{{item.name}}</td>
-                    <td>{{item.price}}</td>
-                    <td class="itemNote">{{item.note}}</td>
-                    <td>{{item.registration_date}}</td>
-                </tr>
+
+                    <tr>
+                        <td>{{ endItem_list.paginator.count|sub:endItem_list.start_index|sub:forloop.counter0|add:1 }}
+                        </td>
+                        <td>{{item.code}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.price}}</td>
+                        <td>{{item.registration_date}}</td>
+                        <td><a href="{% url 'metaData:endItem_detail' item.id %}">
+                        Detail
+                        </a></td>
+                    </tr>
+
+
                 {% endfor %}
                 </tbody>
             </table>
@@ -132,11 +127,6 @@ btn_search.addEventListener(
     document.getElementById('seachForm').submit();
 
 });
-
-
-
-
-
 
 
 </script>

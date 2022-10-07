@@ -33,7 +33,7 @@ body {
             rgba(20, 20, 20, 0.25) 25%,
             rgba(20, 20, 20, 0.5) 50%,
             rgba(20, 20, 20, 0.75) 75%,
-            rgba(20, 20, 20, 1) 180%
+            rgba(20, 20, 20, 1) 100%
           ), url(./img/mainPage_moon.jpg);
         background-size: cover;
         background-repeat:no-repeat;

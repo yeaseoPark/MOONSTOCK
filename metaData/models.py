@@ -17,8 +17,8 @@ class Item(models.Model):
     registration_date = models.DateField(default=timezone.now)
     # end_item 여부 : 0이면 end item 이 아니고 1이면 end item 입니다.
     is_endItem = models.BooleanField(default=True)
-    # 판매가 : end item 이 아닐 경우 판매가는 기재하지 않는다.
-    price = models.IntegerField(null=True, blank=True)
+    # 판매가 : end item 이 아닐 경우 판매가는 0으로 산정
+    price = models.IntegerField(null=False, blank=False, default=0)
     # 비고
     note = models.TextField(null=True, blank=True)
 

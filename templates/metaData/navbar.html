@@ -1,10 +1,18 @@
 <nav class="nav justify-content-center" style="height:8vh;display:flex;justify-content: center; align-items: center;">
     <li class="nav-item">
-        <a class="nav-link  custum-active" aria-current="page" href="{% url 'metaData:endItemIndex' %}">End Item</a>
+        <a class="nav-link
+        {% if request.path == '/metaData/enditem/' %}
+        custum-active
+        {% endif %}
+        " aria-current="page" href="{% url 'metaData:endItemIndex' %}">End Item</a>
     </li>
     <strong style="color:white">|</strong>
     <li class="nav-item">
-        <a class="nav-link" href="#">BOM</a>
+        <a class="nav-link
+        {% if request.path == '/metaData/bom/' %}
+        custum-active
+        {% endif %}" href="{% url 'metaData:bomIndex' %}"
+        >BOM</a>
     </li>
     <strong style="color:white">|</strong>
     <li class="nav-item">
@@ -14,6 +22,7 @@
     <li>
         <a class="nav-link" href="#">Customer</a>
     </li>
+
 </nav>
 <style>
   .nav{
@@ -27,6 +36,7 @@
   .nav-link{
     color:white;
   }
+
 
 
 

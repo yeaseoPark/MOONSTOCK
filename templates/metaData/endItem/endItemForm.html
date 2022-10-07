@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load metaDataFilter %}
+{% block content %}
+
+{% include 'metaData/navbar.html' %}
+
+<div class="wrapper">
+    <br/>
+    <div class="content"
+         style="background-color:rgba(0, 0, 0, 0.4); text-align:left;width:80%; text-align:left; min-height:80vh;">
+        <form method="post" action="#" style="color: white;font-size:medium;">
+            <h1 style="text-align:center">Add End Item</h1>
+            <br/>
+            {%csrf_token%}
+            <div class="d-grid gap-2" style="margin:10px;">
+                <!--첫번쨰 줄 : code, Name start-->
+                <div>
+                    <div style="float:left; width:48%">
+                        <label for="code" class="col-sm-2 col-form-label">Code</label>
+                        <input type="text" id="code" name="code" value="{{form.code.value|default_if_none:''}}"
+                               class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+                        <!--오류-->
+                        {% if form.code.errors %}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ form.code.errors }}
+                        </strong>
+                        {% endif %}
+
+                        {% for message in messages %}
+                            {% if message.tags == 'error'%}
+                            <strong style="font-size:x-small; color:#dc3545;">
+                                {{ message }}
+                            </strong>
+                            {% endif%}
+                        {% endfor %}
+                    </div>
+                    <div style="display:inline-block; float:right; width:48% ">
+                        <label for="name" class="col-sm-2 col-form-label">Name</label>
+                        <input type="text" id="name" name="name" value="{{form.name.value|default_if_none:''}}"
+                               class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+                        <!--오류-->
+                        {% if form.name.errors %}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ form.name.errors }}
+                        </strong>
+                        {% endif %}
+                    </div>
+                </div>
+                <!--첫번쨰 줄 : code, Name end-->
+
+                <!--두번쨰 줄 : registration_date, price start-->
+                <div>
+                    <div style="float:left; width:48%">
+
+                        <label for="registration_date" class="col-sm-5 col-form-label">Registration Date</label>
+                        <input type="date" id="registration_date" name="registration_date"
+                               value="{{form.registration_date.value|date:'Y-m-d'|default_if_none:''}}"
+                               class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+                        <!--오류-->
+                        {% if form.registration_date.errors %}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ form.registration_date.errors }}
+                        </strong>
+                        {% endif %}
+                    </div>
+
+                    <div style="display:inline-block; float:right; width:48% ">
+                        <label for="price" class="col-sm-2 col-form-label">Price</label>
+                        <input type="number" id="price" name="price" value="{{form.price.value|default_if_none:''}}"
+                               class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+                        <!--오류-->
+                        {% if form.price.errors %}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ form.price.errors }}
+                        </strong>
+                        {% endif %}
+                    </div>
+                </div>
+                <!--두번쨰 줄 : registration_date, price end-->
+                <!--세 번째 줄 : Note start -->
+
+                <div>
+                    <label for="note" class="col-sm-2 col-form-label">Note</label>
+                    <textarea class="form-control form-control-sm mb-2" name="note" id="note" rows="10">
+                        {{form.note.value|default_if_none:''}}
+                    </textarea>
+                </div>
+                <!--오류-->
+                {% if form.note.errors %}
+                <strong style="font-size:x-small; color:#dc3545;">
+                    {{ form.note.errors }}
+                </strong>
+                {% endif %}
+
+                <!--세 번째 줄 : Note end -->
+            </div>
+            <br/>
+            <div class="d-grid gap-2" style="margin:10px">
+                <button type="submit" class="btn btn-primary">SUBMIT</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
