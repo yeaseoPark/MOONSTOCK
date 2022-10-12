@@ -5,21 +5,144 @@
 {% include 'metaData/navbar.html' %}
 {% include 'metaData/searchTab.html' %}
 
+
+
 <div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
     <div class="content" style="width:80%; text-align:left; min-height:80vh;">
 
-        {% for item, info in annotated_list %}
-        <script type="text/javascript">
-            var inputBlank = "&nbsp;&nbsp; &nbsp;&nbsp;".repeat({{ info.level }});
-            document.write(inputBlank);
-        </script> ─ [{{item.code}}] {{ item.name }}
-        <br/>
-        {% endfor %}
-    </div>
 
+        {% for end_item in endItem_list %}
+        <div style="padding-bottom:20px; padding-top:20px">
+            <div class="accordion" id="accordionBOM_{{forloop.counter}}">
+                <div class="accordion-item">
+                    <h2 class="accordion-header bg-dark" id="heading{{forloop.counter}}">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse{{forloop.counter}}" aria-expanded="true"
+                                aria-controls="collapse{{forloop.counter}}">
+                            <strong>{{end_item}}</strong>
+
+                        </button>
+                    </h2>
+
+                    <div id="collapse{{forloop.counter}}" class="accordion-collapse collapse show bg-dark"
+                         aria-labelledby="heading{{forloop.counter}}"
+                         data-bs-parent="#accordionBOM_{{forloop.counter}}">
+                        <div class="accordion-body">
+                            <table style="font-size:small;" table class="table table-hover">
+                                <thead style="text-align:center; " class="table-dark">
+                                <th>Items</th>
+                                <th>Detail</th>
+                                <th style="width:20%">Append Material</th>
+                                </thead>
+                                <tbody>
+
+                                {% with schema=annotated_dict|dictitem:end_item %}
+                                {% for item, info in schema %}
+                                <tr>
+                                    <td style="text-align:left;">
+                                        <script type="text/javascript">
+            var inputBlank = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".repeat({{ info.level }});
+            document.write(inputBlank);
+
+                                        </script>
+
+                                        ─ [{{item.code}}] {{ item.name }}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'metaData:bom_detail' item.id %}">Detail</a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'metaData:bom_add' item.id %}">Append</a>
+                                    </td>
+                                </tr>
+
+                                {% endfor %}
+                                {% endwith %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        {% endfor %}
+
+        <!-- 페이징 처리 시작 -->
+        <ul class="pagination justify-content-center pagination-sm">
+            <!-- 이전페이지 -->
+            {% if endItem_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0)" width="30%"
+                   data-page="{{ endItem_list.previous_page_number }}"
+                >◀</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#" width="30%">◀</a>
+            </li>
+            {% endif %}
+            <!-- 페이지리스트 -->
+            {% for page_number in endItem_list.paginator.page_range %}
+            {% if page_number >= endItem_list.number|add:-5 and page_number <= endItem_list.number|add:5 %}
+            {% if page_number == endItem_list.number %}
+            <li class="page-item active" aria-current="page">
+                <a class="page-link"
+                   data-page="{{ page_number }}"
+                   href="javascript:void(0)">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{ page_number }}"
+                   href="javascript:void(0)">{{ page_number }}</a>
+            </li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+            <!-- 다음페이지 -->
+            {% if endItem_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{endItem_list.next_page_number}}" href="javascript:void(0)">▶</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">▶</a>
+            </li>
+            {% endif %}
+        </ul>
+        <!-- 페이징 처리 끝 -->
+    </div>
 </div>
 
 <!-- search Form 시작-->
+<form id="seachForm" method="get" action="{% url 'metaData:bomIndex' %}">
+    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
+    <input type="hidden" id="page" name="page" value="{{ page }}">
+</form>
+
+
+<script type="text/javascript">
+const page_elements = document.getElementsByClassName("page-link");
+Array.from(page_elements).forEach(
+    function(element){
+        element.addEventListener('click', function(){
+        document.getElementById('page').value = this.dataset.page;
+        document.getElementById('seachForm').submit();
+    });
+
+    });
+
+const btn_search = document.getElementById("btn_search");
+btn_search.addEventListener(
+'click', function(){
+    document.getElementById('kw').value = document.getElementById('search_kw').value;
+    document.getElementById('page').value = 1;
+    document.getElementById('seachForm').submit();
+
+});
+
+
+</script>
 
 <!--search Form end-->
 {% endblock %}

@@ -6,6 +6,7 @@
         {% endif %}
         " aria-current="page" href="{% url 'metaData:endItemIndex' %}">End Item</a>
     </li>
+
     <strong style="color:white">|</strong>
     <li class="nav-item">
         <a class="nav-link
@@ -15,12 +16,22 @@
         >BOM</a>
     </li>
     <strong style="color:white">|</strong>
+
+
     <li class="nav-item">
-        <a class="nav-link" href="#">Vendor</a>
+        <a class="nav-link
+        {% if request.path == '/metaData/otherCompany/vendor/' %}
+        custum-active
+        {% endif %}
+" href="{% url 'metaData:vendorIndex' %}">Vendor</a>
     </li>
     <strong style="color:white">|</strong>
     <li>
-        <a class="nav-link" href="#">Customer</a>
+        <a class="nav-link
+{% if request.path == '/metaData/otherCompany/customer/' %}
+        custum-active
+        {% endif %}
+" href="{% url 'metaData:customerIndex' %}">Customer</a>
     </li>
 
 </nav>
@@ -36,6 +47,10 @@
   .nav-link{
     color:white;
   }
+
+
+
+
 
 
 

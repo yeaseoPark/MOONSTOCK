@@ -40,32 +40,10 @@ class Item(MP_Node):
         return self.is_root()
 
 
-# end item 을 구성하는 BOM 테이블
-"""
-class BOM(models.Model):
-    # end item : 최종 만들어지는 item
-    end_item = models.ForeignKey(Item, null=False, blank=False, on_delete=models.CASCADE, related_name='end_item')
-    # 부모 노드
-    parent_item = models.ForeignKey(Item, null =False, blank=False, on_delete=models.CASCADE, related_name='parent_item')
-    # 자식 노드 : 부모 노드 = 자식 노드이면 root 노드로 가정
-    child_item = models.ForeignKey(Item, null=False, blank=False, on_delete=models.CASCADE, related_name='child_item')
-    # 부모 아이템을 만드는데 필요한 수량
-    required = models.IntegerField(null=False, blank=False)
-    # 깊이 : root 노드의 깊이 = 0
-    level = models.IntegerField(null=False, blank=False)
-
-    def __str__(self):
-        return self.end_item +'('+ str(self.level) + ")"
-
-"""
-
-
-
-
 
 # 업체 (인벤토리 아이템을 사오는 곳) (is_seller 과 is_purchaser 로 판매 / 구매 업체를 나눈다)
-"""
-class Vendor(models.Model):
+
+class OtherCompany(models.Model):
     # 업종 choice
     SECTOR_CHOICE = {
         ('manufacturing', 'Manufacturing'),
@@ -74,17 +52,25 @@ class Vendor(models.Model):
         ('restaurant', 'Restaurant business')
     }
     # 업체 명
-    vendor = models.CharField(max_length=200, null=False, blank=False)
+    company_name = models.CharField(max_length=200, null=False, blank=False)
     # 업체 업종
-    sector = models.CharField(max_length=80, choices=SECTOR_CHOICE)
+    company_sector = models.CharField(max_length=80, choices=SECTOR_CHOICE, null=True)
     # 업체 전화번호
-    phoneNum = models.CharField(max_length=200, null=False, blank=False)
+    company_phoneNum = models.CharField(max_length=200, null=True, blank=True)
     #업체 주소
-    address = models.CharField(max_length=300, null=False, blank=False)
-    # is_seller : 판매 업체 유무를 나타냄
+    company_address = models.CharField(max_length=300, null=True, blank=True)
+    # 업체 이메일 주소
+    company_email = models.CharField(max_length=300, null=True, blank=True)
+    # is_vendor : 판매 업체 유무를 나타냄
     # 0이면 자사 입장에서 사오는 업체가 아니며 1이면 해당 vendor에게서 item을 사온다
-    is_seller = models.BooleanField(null=False, blank=False)
-    # is_purchaser : 판매 업체 유무를 나타냄
+    is_vendor = models.BooleanField(null=False, blank=False)
+    # is_customer : 판매 업체 유무를 나타냄
     # 0이면 자사 입장에서 item을 파는 업체가 아니며 1이면 해당 vendor에게서 item을 판다
-    is_purchaser = models.BooleanField(null=False, blank=False)
-"""
+    is_customer = models.BooleanField(null=False, blank=False)
+    # 특이 사항
+    note = models.TextField(null=True, blank=True)
+    # 해당 업체와 거래하는 업체 (즉 자사)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name ='myCompany')
+
+    def __str__(self):
+        return self.company_name + "(" + self.company_sector + ")"

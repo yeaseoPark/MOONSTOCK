@@ -8,3 +8,4 @@ class CategoryAdmin(TreeAdmin):
     form = movenodeform_factory(Item)
 
 admin.site.register(Item, CategoryAdmin)
+admin.site.register(OtherCompany)

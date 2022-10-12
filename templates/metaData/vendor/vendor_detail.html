@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load metaDataFilter %}
+{% block content %}
+
+{% include 'metaData/navbar.html' %}
+
+<div class="wrapper">
+    <br/>
+    <div class="content"
+         style="background-color:rgba(0, 0, 0, 0.4); text-align:left;width:80%; text-align:left; min-height:80vh;">
+        <form method="post" style="color: white;font-size:medium;">
+
+
+            <div class="d-grid gap-2" style="margin:10px;">
+                <div>
+                    <div style="float:left">
+                        <h2 style="text-align:left">{{vendor.company_name}}</h2>
+                    </div>
+                    <div style="float:right">
+                        <a href="javascript:void(0)" class="delete btn btn-danger btn-sm"
+                           data-uri="{% url 'metaData:vendor_delete' vendor.id %}"
+                        >Delete</a>
+                    </div>
+                </div>
+            </div>
+
+
+            <br/>
+            {%csrf_token%}
+            <div class="d-grid gap-2" style="margin:10px;">
+                <!--첫번쨰 줄 : company_name, company_sector start-->
+                <div>
+                    <div style="float:left; width:48%">
+                        <label for="company_name" class="col-sm-5 col-form-label">Company Name</label>
+                        <input type="text" id="company_name" name="company_name"
+                               value="{{form.company_name.value|default_if_none:''}}"
+                               class="form-control form-control-sm mb-2" aria-label=".form-control-sm" readonly>
+                        <!--오류-->
+                        {% if form.company_name.errors %}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ form.company_name.errors }}
+                        </strong>
+                        {% endif %}
+
+                        {% for message in messages %}
+                        {% if message.tags == 'error'%}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ message }}
+                        </strong>
+                        {% endif%}
+                        {% endfor %}
+                    </div>
+                    <div style="display:inline-block; float:right; width:48% ">
+                        <label for="company_sector" class="col-sm-5 col-form-label">Sector</label>
+                        <select name="company_sector" id="company_sector" class="form-select form-select-sm mb-2"
+                                aria-label=".form-select-sm example" readonly>
+                            {% for sector in form.company_sector.field.choices %}
+                            <option value="{{ sector.0 }}"
+                                    {% if sector.0 == form.company_sector.value %} selected
+                                    {% else %}
+                                    disabled
+                                    {% endif %}>
+                                {{ sector.1 }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <!--오류-->
+                        {% if form.company_sector.errors %}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ form.company_sector.errors }}
+                        </strong>
+                        {% endif %}
+                    </div>
+                </div>
+                <!--첫번쨰 줄 : company_name, company_sector end-->
+
+                <!--두번쨰 줄 : company_phoneNum, company_email start-->
+                <div>
+                    <div style="float:left; width:48%">
+
+                        <label for="company_phoneNum" class="col-sm-5 col-form-label">Phone Number</label>
+                        <input type="text" id="company_phoneNum" name="company_phoneNum"
+                               value="{{form.company_phoneNum.value|default_if_none:''}}"
+                               class="form-control form-control-sm mb-2" aria-label=".form-control-sm" readonly>
+                        <!--오류-->
+                        {% if form.company_phoneNum.errors %}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ form.company_phoneNum.errors }}
+                        </strong>
+                        {% endif %}
+                    </div>
+
+                    <div style="display:inline-block; float:right; width:48% ">
+                        <label for="company_email" class="col-sm-2 col-form-label">Email</label>
+                        <input type="text" id="company_email" name="company_email"
+                               value="{{form.company_email.value|default_if_none:''}}"
+                               class="form-control form-control-sm mb-2" aria-label=".form-control-sm" readonly>
+                        <!--오류-->
+                        {% if form.company_email.errors %}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ form.company_email.errors }}
+                        </strong>
+                        {% endif %}
+                    </div>
+                </div>
+                <!--두번쨰 줄 : company_phoneNum, company_email end-->
+
+
+                <!--세번쨰 줄 : company_address start -->
+                <div>
+                    <div style="float:left;width:100%;">
+
+                        <label for="company_address" class="col-sm-2 col-form-label">Address</label>
+                        <input type="text" id="company_address" name="company_address"
+                               value="{{form.company_address.value|default_if_none:''}}"
+                               class="form-control form-control-sm mb-2" aria-label=".form-control-sm" readonly>
+                        <!--오류-->
+                        {% if form.company_address.errors %}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ form.company_address.errors }}
+                        </strong>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <!--세번쨰 줄 : company_address end -->
+
+                <hr/>
+
+
+                <!--네 번째 줄 : Note start -->
+
+                <div style="font-size:small; min-height:200px; padding-left:3%;padding-right:3%;padding-bottom:3%;">
+                    {% if vendor.note %}
+                    {{ vendor.note|mark }}
+                    {%endif%}
+                </div>
+
+                <!--네 번째 줄 : Note end -->
+                <hr/>
+            </div>
+            <br/>
+            <div class="d-grid gap-2" style="margin:10px">
+                <a class="btn btn-primary" href="{% url 'metaData:vendor_modify' vendor.id %}">Edit</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(
+function(element){
+element.addEventListener(
+'click', function(){
+if(confirm("정말로 삭제하시겠습니까?")){
+location.href = this.dataset.uri;
+};
+    });
+});
+
+
+</script>
+
+{% endblock %}
+

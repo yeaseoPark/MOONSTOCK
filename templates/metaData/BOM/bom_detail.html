@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load metaDataFilter %}
+{% block content %}
+
+{% include 'metaData/navbar.html' %}
+
+<div class="wrapper">
+    <br/>
+    <div class="content"
+         style="background-color:rgba(0, 0, 0, 0.4); text-align:left;width:80%; text-align:left; min-height:80vh;">
+        <div class="d-grid gap-2" style="margin:10px;">
+            <div>
+                <div style="float:left">
+                    <h2 style="text-align:left">[ {{ bom_item.code }} ] {{ bom_item.name }}</h2>
+                </div>
+                <div style="float:right">
+                    <a href="javascript:void(0)" class="delete btn btn-danger btn-sm"
+                       data-uri="{% url 'metaData:bom_delete' bom_item.id %}"
+                    >Delete</a>
+                </div>
+            </div>
+        </div>
+        <div class="d-grid gap-2" style="margin:10px;">
+            <!-- material Item 테이블 정보 보여주기 시작 -->
+            <div style="padding-bottom:20px;padding-top:20px;">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+
+                    <th style="text-align:center;">Price</th>
+                    <th style="text-align:center;">Registration Date</th>
+
+                    </thead>
+
+                    <tbody>
+
+                    <tr>
+                        <td>{{bom_item.price}}</td>
+                        <td>{{bom_item.registration_date}}</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- Material Item 테이블 정보 보여주기 끝 -->
+
+            <!-- Material Item Note 정보 보여주기 시작 -->
+
+            <div style="font-size:small; min-height:200px; padding-left:3%;padding-right:3%;padding-bottom:3%;">
+                {{ bom_item.note|mark }}
+            </div>
+
+            <!-- Material Item Note 정보 보여주기 끝 -->
+            <hr style="background: rgba(255,255,255,1); height:2px;"/>
+            <div class="d-grid gap-2">
+                <a href="{% url 'metaData:bom_modify' bom_item.id %}" class="btn btn-primary btn-sm">Edit</a>
+            </div>
+
+        </div>
+        <br/>
+
+
+    </div>
+</div>
+
+<script type="text/javascript">
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(
+function(element){
+element.addEventListener(
+'click', function(){
+if(confirm("정말로 삭제하시겠습니까?")){
+location.href = this.dataset.uri;
+};
+    });
+});
+
+
+</script>
+
+{% endblock %}
+
+

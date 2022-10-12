@@ -9,17 +9,29 @@
     <div class="content"
          style="background-color:rgba(0, 0, 0, 0.4); text-align:left;width:80%; text-align:left; min-height:80vh;">
         <form method="post" action="#" style="color: white;font-size:medium;">
-            {% if form.name.value %}
-            <h1 style="text-align:center">Edit End Item</h1>
+            {% if form.code.value %}
+            <h1 style="text-align:center">
+                Edit Material
+            </h1>
+            <p style="text-align:center; font-size:medium">
+                └ Material : [{{form.code.value}}] {{form.name.value}}
+            </p>
+
             {% else %}
-            <h1 style="text-align:center">Add End Item</h1>
+            <h1 style="text-align:center">
+                Add Material
+            </h1>
+            <p style="text-align:center; font-size:medium">
+                └ Parent : [{{parent.code}}] {{parent.name}}
+            </p>
             {% endif %}
 
-            <br/>
+
             {%csrf_token%}
             <div class="d-grid gap-2" style="margin:10px;">
                 <!--첫번쨰 줄 : code, Name start-->
                 <div>
+                    <!--code start -->
                     <div style="float:left; width:48%">
                         <label for="code" class="col-sm-2 col-form-label">Code</label>
                         <input type="text" id="code" name="code" value="{{form.code.value|default_if_none:''}}"
@@ -32,13 +44,17 @@
                         {% endif %}
 
                         {% for message in messages %}
-                            {% if message.tags == 'error'%}
-                            <strong style="font-size:x-small; color:#dc3545;">
-                                {{ message }}
-                            </strong>
-                            {% endif%}
+                        {% if message.tags == 'error'%}
+                        <strong style="font-size:x-small; color:#dc3545;">
+                            {{ message }}
+                        </strong>
+                        {% endif%}
                         {% endfor %}
                     </div>
+                    <!--code end -->
+
+                    <!--name start -->
+
                     <div style="display:inline-block; float:right; width:48% ">
                         <label for="name" class="col-sm-2 col-form-label">Name</label>
                         <input type="text" id="name" name="name" value="{{form.name.value|default_if_none:''}}"
@@ -50,11 +66,13 @@
                         </strong>
                         {% endif %}
                     </div>
+                    <!--name start -->
                 </div>
                 <!--첫번쨰 줄 : code, Name end-->
 
-                <!--두번쨰 줄 : registration_date, price start-->
+                <!--두번쨰 줄 : registration_date, required start-->
                 <div>
+                    <!-- registration_date start -->
                     <div style="float:left; width:48%">
 
                         <label for="registration_date" class="col-sm-5 col-form-label">Registration Date</label>
@@ -69,19 +87,26 @@
                         {% endif %}
                     </div>
 
+                    <!-- registration_date end -->
+
+                    <!--required start -->
+
                     <div style="display:inline-block; float:right; width:48% ">
-                        <label for="price" class="col-sm-2 col-form-label">Price</label>
-                        <input type="number" id="price" name="price" value="{{form.price.value|default_if_none:''}}"
+                        <label for="required" class="col-sm-2 col-form-label">Required</label>
+                        <input type="number" id="required" name="required"
+                               value="{{form.required.value|default_if_none:''}}"
                                class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
                         <!--오류-->
-                        {% if form.price.errors %}
+                        {% if form.required.errors %}
                         <strong style="font-size:x-small; color:#dc3545;">
-                            {{ form.price.errors }}
+                            {{ form.required.errors }}
                         </strong>
                         {% endif %}
                     </div>
+                    <!--required end-->
                 </div>
                 <!--두번쨰 줄 : registration_date, price end-->
+
                 <!--세 번째 줄 : Note start -->
 
                 <div>
@@ -98,6 +123,7 @@
                 {% endif %}
 
                 <!--세 번째 줄 : Note end -->
+
             </div>
             <br/>
             <div class="d-grid gap-2" style="margin:10px">
