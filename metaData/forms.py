@@ -34,6 +34,14 @@ class materialForm(forms.ModelForm):
             'required' : 'Required',
         }
 
+class bomForm(forms.ModelForm):
+    class Meta:
+        model = Node
+        fields = ['item','note']
+        labels = {
+            'item' : 'Item',
+            'note' : 'Note'
+        }
 
 class otherCompanyForm(forms.ModelForm):
     company_sector = forms.ChoiceField(widget=forms.RadioSelect, choices=SECTOR_CHOICE)

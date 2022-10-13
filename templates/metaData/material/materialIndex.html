@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load metaDataFilter %}
+{% block content %}
+
+{% include 'metaData/navbar.html' %}
+{% include 'metaData/searchTab.html' %}
+
+<div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
+    <div class="content" style="width:80%; text-align:left; min-height:80vh;">
+
+        <!-- End Item 테이블 보여주기 시작 -->
+
+        <div>
+            <div style="float:left; text-align:center; display:flex;">
+
+                <h2> ▶ Material</h2>
+            </div>
+            <div style="float:right;">
+                <a class="btn btn-primary btn-sm" style="display:top;" href="{%url 'metaData:material_add'%}"> ADD</a>
+            </div>
+        </div>
+        <br/>
+
+        <div style="padding-bottom:20px; padding-top:20px">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                <th style="width:5%">No.</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Registration Date</th>
+                <th>Detail</th>
+                </thead>
+
+                <tbody>
+                {% for item in material_list %}
+
+                    <tr>
+                        <td>{{ material_list.paginator.count|sub:material_list.start_index|sub:forloop.counter0|add:1 }}
+                        </td>
+                        <td>{{item.code}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.registration_date}}</td>
+                        <td><a href="{% url 'metaData:material_detail' item.id %}">
+                        Detail
+                        </a></td>
+                    </tr>
+
+
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- End Item 테이블 보여주기 끝 -->
+
+        <!-- 페이징 처리 시작 -->
+        <ul class="pagination justify-content-center pagination-sm">
+            <!-- 이전페이지 -->
+            {% if material_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0)" width="30%"
+                   data-page="{{ material_list.previous_page_number }}"
+                >◀</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#" width="30%">◀</a>
+            </li>
+            {% endif %}
+            <!-- 페이지리스트 -->
+            {% for page_number in material_list.paginator.page_range %}
+            {% if page_number >= material_list.number|add:-5 and page_number <= material_list.number|add:5 %}
+            {% if page_number == material_list.number %}
+            <li class="page-item active" aria-current="page">
+                <a class="page-link"
+                   data-page="{{ page_number }}"
+                   href="javascript:void(0)">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{ page_number }}"
+                   href="javascript:void(0)">{{ page_number }}</a>
+            </li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+            <!-- 다음페이지 -->
+            {% if material_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{material_list.next_page_number}}" href="javascript:void(0)">▶</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">▶</a>
+            </li>
+            {% endif %}
+        </ul>
+        <!-- 페이징 처리 끝 -->
+    </div>
+
+</div>
+
+<!-- search Form 시작-->
+<form id="seachForm" method="get" action="{% url 'metaData:materialIndex' %}">
+    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
+    <input type="hidden" id="page" name="page" value="{{ page }}">
+</form>
+
+
+<script type="text/javascript">
+const page_elements = document.getElementsByClassName("page-link");
+Array.from(page_elements).forEach(
+    function(element){
+        element.addEventListener('click', function(){
+        document.getElementById('page').value = this.dataset.page;
+        document.getElementById('seachForm').submit();
+    });
+
+    });
+
+const btn_search = document.getElementById("btn_search");
+btn_search.addEventListener(
+'click', function(){
+    document.getElementById('kw').value = document.getElementById('search_kw').value;
+    document.getElementById('page').value = 1;
+    document.getElementById('seachForm').submit();
+
+});
+
+
+</script>
+
+<!--search Form end-->
+{% endblock %}
+

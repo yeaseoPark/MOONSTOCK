@@ -11,12 +11,17 @@ urlpatterns = [
     path('enditem/detail/<int:endItem_id>/', views.endItem_detail, name="endItem_detail"),
     path('enditem/modify/<int:endItem_id>/', views.endItem_modify, name="endItem_modify"),
     path('enditem/delete/<int:endItem_id>/', views.endItem_delete, name="endItem_delete"),
+    # material Path
+    path('material/', views.materialIndex, name='materialIndex'),
+    path('material/add/', views.material_add, name='material_add'),
+    path('material/detail/<int:material_id>/', views.material_detail, name="material_detail"),
+    path('material/modify/<int:material_id>/', views.material_modify, name="material_modify"),
+    path('material/delete/<int:material_id>/', views.material_delete, name="material_delete"),
     # BOM Path
     path('bom/', views.bomIndex, name='bomIndex'),
-    path('bom/add/<int:item_id>/', views.bom_add, name='bom_add'),
-    path('bom/detail/<int:bomItem_id>/', views.bom_detail, name="bom_detail"),
-    path('bom/modify/<int:bomItem_id>/', views.bom_modify, name="bom_modify"),
-    path('bom/delete/<int:bomItem_id>/', views.bom_delete, name="bom_delete"),
+    path('bom/add/<int:node_id>/', views.bom_add, name='bom_add'),
+    path('bom/delete/<int:node_id>', views.bom_delete, name='bom_delete'),
+
     # Vendor Path
     path('otherCompany/vendor/', views.vendorIndex, name='vendorIndex'),
     path('otherCompany/vendor/add/', views.vendor_add, name='vendor_add'),

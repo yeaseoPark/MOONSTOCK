@@ -4,8 +4,13 @@
 
 {% include 'metaData/navbar.html' %}
 {% include 'metaData/searchTab.html' %}
+<script>
+function showBOM_appendForm(node_id, end_item_id){
+    window.open("add/"+node_id +"/?endItem_id="+end_item_id ,"Append Material for child",
+    "width=600, height=330, top=10, left=10");
+}
 
-
+</script>
 
 <div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
     <div class="content" style="width:80%; text-align:left; min-height:80vh;">
@@ -33,6 +38,7 @@
                                 <th>Items</th>
                                 <th>Detail</th>
                                 <th style="width:20%">Append Material</th>
+                                <th>Delete</th>
                                 </thead>
                                 <tbody>
 
@@ -44,15 +50,27 @@
             var inputBlank = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".repeat({{ info.level }});
             document.write(inputBlank);
 
+
+
                                         </script>
 
                                         ─ [{{item.code}}] {{ item.name }}
                                     </td>
                                     <td>
-                                        <a href="{% url 'metaData:bom_detail' item.id %}">Detail</a>
+                                        {% if info.level == 0 %}
+                                        <a href="{% url 'metaData:endItem_detail' item.id %}">Detail</a>
+                                        {% else %}
+                                        <a href="{% url 'metaData:material_detail' item.id %}">Detail</a>
+                                        {% endif %}
                                     </td>
                                     <td>
-                                        <a href="{% url 'metaData:bom_add' item.id %}">Append</a>
+                                        <a onclick="showBOM_appendForm({{info.node_id}},{{end_item.id}});" href="">Append</a>
+                                    </td>
+                                    <td>
+                                        {% if info.level != 0 %}
+                                        <a href="{% url 'metaData:bom_delete' info.node_id %}">Delete</a>
+                                        {% endif %}
+
                                     </td>
                                 </tr>
 
@@ -140,6 +158,8 @@ btn_search.addEventListener(
     document.getElementById('seachForm').submit();
 
 });
+
+
 
 
 </script>

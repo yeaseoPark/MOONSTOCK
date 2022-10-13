@@ -2,24 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e277158a-97f9-45a9-8af8-4f0bb336a0a7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/metaData/BOM/bomForm.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/metaData/BOM/bom_detail.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/metaData/customer/customerForm.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/metaData/customer/customerIndex.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/metaData/customer/customer_detail.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/metaData/vendor/vendorForm.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/metaData/vendor/vendorIndex.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/metaData/vendor/vendor_detail.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/metaData/material/materialForm.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/metaData/material/materialIndex.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/metaData/material/material_detail.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/metaData/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaData/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/metaData/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaData/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/metaData/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaData/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/metaData/templatetags/metaDataFilter.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaData/templatetags/metaDataFilter.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/metaData/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaData/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/metaData/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaData/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/metaData/BOM/bomForm.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/metaData/BOM/bomForm.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/metaData/BOM/bomIndex.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/metaData/BOM/bomIndex.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/metaData/endItem/endItemForm.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/metaData/endItem/endItemForm.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/metaData/BOM/bom_detail.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/metaData/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/metaData/navbar.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,16 +47,16 @@
     "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "D:/project/MOONSTOCK/templates/metaData/customer",
+    "last_opened_file_path": "D:/project/MOONSTOCK/templates/metaData/material",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\project\MOONSTOCK\templates\metaData\material" />
       <recent name="D:\project\MOONSTOCK\templates\metaData\customer" />
       <recent name="D:\project\MOONSTOCK\templates\metaData\vendor" />
       <recent name="D:\project\MOONSTOCK\templates\metaData\BOM" />
-      <recent name="D:\project\MOONSTOCK\templates\metaData\material" />
       <recent name="D:\project\MOONSTOCK\templates\metaData" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -96,12 +91,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/metaData/views.py</url>
-          <line>12</line>
+          <line>13</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/metaData/models.py</url>
-          <line>54</line>
+          <line>93</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

@@ -6,6 +6,14 @@
         {% endif %}
         " aria-current="page" href="{% url 'metaData:endItemIndex' %}">End Item</a>
     </li>
+    <strong style="color:white">|</strong>
+    <li class="nav-item">
+        <a class="nav-link
+        {% if request.path == '/metaData/material/' %}
+        custum-active
+        {% endif %}
+        " aria-current="page" href="{% url 'metaData:materialIndex' %}">Material</a>
+    </li>
 
     <strong style="color:white">|</strong>
     <li class="nav-item">
@@ -47,6 +55,7 @@
   .nav-link{
     color:white;
   }
+
 
 
 
