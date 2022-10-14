@@ -64,7 +64,7 @@ class Item(models.Model):
 
 class Node(MP_Node):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, null=False, blank=False)
-    note = models.TextField(null=True, blank=True, default="")
+    required = models.IntegerField(null=True, blank=True, default = 0)
 
     def __str__(self):
         return self.item.code + ":" + self.item.name

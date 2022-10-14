@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'treebeard',
     'common.apps.CommonConfig',
     'metaData.apps.MetadataConfig',
+    'transaction.apps.TransactionConfig',
 ]
 
 MIDDLEWARE = [

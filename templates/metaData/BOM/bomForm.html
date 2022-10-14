@@ -21,13 +21,37 @@
             <br/>
             <select name="item" id="item" class="form-select form-select-sm mb-2"
                     aria-label=".form-select-sm example">
+
+                {%if form.item %}
+                {% for material in options %}
+                <option value="{{material.id}}" selected>
+                    [{{material.code}}] {{material.name}}
+                </option>
+                {% endfor %}
+
+                {% else %}
+
                 <option selected disabled>Open this select menu</option>
                 {% for material in options %}
                 <option value="{{material.id}}">
                     [{{material.code}}] {{material.name}}
                 </option>
                 {% endfor %}
+
+                {% endif %}
+
             </select>
+
+            <label for="required" class="col-sm-2 col-form-label">Required</label>
+            <input type="number" id="required" name="required" value="{{form.required.value|default_if_none:''}}"
+                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+            <!--오류-->
+            {% if form.required.errors %}
+            <strong style="font-size:x-small; color:#dc3545;">
+                {{ form.required.errors }}
+            </strong>
+            {% endif %}
+
             {% for message in messages %}
             {% if message.tags == 'error'%}
             <strong style="font-size:x-small; color:#dc3545;">

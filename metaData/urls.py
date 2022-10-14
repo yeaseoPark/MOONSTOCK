@@ -20,7 +20,8 @@ urlpatterns = [
     # BOM Path
     path('bom/', views.bomIndex, name='bomIndex'),
     path('bom/add/<int:node_id>/', views.bom_add, name='bom_add'),
-    path('bom/delete/<int:node_id>', views.bom_delete, name='bom_delete'),
+    path('bom/delete/<int:node_id>/', views.bom_delete, name='bom_delete'),
+    path('bom/update/<int:node_id>/', views.bom_update, name='bom_update'),
 
     # Vendor Path
     path('otherCompany/vendor/', views.vendorIndex, name='vendorIndex'),

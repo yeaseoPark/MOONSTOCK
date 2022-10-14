@@ -114,6 +114,7 @@ def bomIndex(request):
     for item, info in annotated_list:
         if item.item.user == request.user:
             info['node_id'] = item.id
+            info['required'] = item.required
             if info['level'] == 0:
                 end_Item = item.item
                 temp_dict[end_Item] = [(end_Item, info)]
@@ -142,6 +143,8 @@ def bom_add(request, node_id):
     exclude_option = list()
     for node in parentNode.get_descendants():
         exclude_option.append(node.item)
+    for node in parentNode.get_siblings():
+        exclude_option.append(node.item)
 
     options = list(set(options) - set(exclude_option))
 
@@ -149,9 +152,10 @@ def bom_add(request, node_id):
         return redirect("common:login")
 
     if request.method == 'POST':
-        child = Item.objects.get(Q(user__exact=request.user) & Q(id__exact = request.POST['item']))
-        childNode = Node(item = child)
-        parentNode.add_child(instance = childNode)
+        form = bomForm(request.POST)
+        if form.is_valid():
+            child = form.save(commit=False)
+            parentNode.add_child(instance=child)
 
         return HttpResponse('<script type="text/javascript">opener.location.reload();window.close()</script>')
     else:
@@ -168,6 +172,29 @@ def bom_delete(request, node_id):
         return redirect("metaData:bomIndex")
     node.delete()
     return redirect("metaData:bomIndex")
+
+@login_required(login_url='common:login')
+def bom_update(request, node_id):
+    node = get_object_or_404(Node, pk=node_id)
+    item = node.item
+
+    options = [item]
+    if item.user != request.user:
+        messages.error(request,"인가된 사용자가 아닙니다")
+        return redirect("metaData:bomIndex")
+
+    if request.method == 'POST':
+        form = bomForm(request.POST, instance=node)
+        if form.is_valid():
+            updateNode = form.save(commit=False)
+            updateNode.save()
+            return HttpResponse('<script type="text/javascript">opener.location.reload();window.close()</script>')
+    else:
+        form = bomForm(instance=node)
+    context = {'options':options, 'form':form}
+    return render(request, "metaData/BOM/bomForm.html", context)
+
+
 
 @login_required(login_url='common:login')
 def vendorIndex(request):

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load metaDataFilter %}
+{% block content %}
+
+{% include 'metaData/navbar.html' %}
+{% include 'metaData/searchTab.html' %}
+
+<div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
+    <div class="content" style="width:80%; text-align:left; min-height:80vh;">
+
+        <!-- Inventory 테이블 보여주기 시작 -->
+
+        <div>
+            <div style="float:left; text-align:center; display:flex;">
+
+                <h2> ▶ Inventory</h2>
+            </div>
+        </div>
+        <br/>
+
+        <div style="padding-bottom:20px; padding-top:20px">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                  <th style="width:5%">No.</th>
+                  <th>Reference Date</th>
+                  <th>Item</th>
+                  <th>Ammount</th>
+                </thead>
+                <tbody>
+                  {% for data in inventory_list %}
+                    <tr>
+                      <td>
+                      </td>
+                      <td>
+                        {{data.referenceDate}}
+                      </td>
+                      <td>
+                        {{data.item}}
+                      </td>
+                      <td>
+                        {{data.ammount}}
+                      </td>
+                    </tr>
+
+                  {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <!-- Inventory 테이블 보여주기 끝 -->
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+

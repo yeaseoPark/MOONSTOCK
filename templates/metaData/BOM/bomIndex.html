@@ -10,6 +10,12 @@ function showBOM_appendForm(node_id, end_item_id){
     "width=600, height=330, top=10, left=10");
 }
 
+function showBOM_updateForm(node_id){
+    window.open("update/"+node_id +"/" ,"Update BOM",
+    "width=600, height=330, top=10, left=10");
+}
+
+
 </script>
 
 <div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
@@ -36,9 +42,9 @@ function showBOM_appendForm(node_id, end_item_id){
                             <table style="font-size:small;" table class="table table-hover">
                                 <thead style="text-align:center; " class="table-dark">
                                 <th>Items</th>
-                                <th>Detail</th>
-                                <th style="width:20%">Append Material</th>
-                                <th>Delete</th>
+                                <th style="width:15%">Append Material</th>
+                                <th style="width:10%">Update</th>
+                                <th style="width:10%">Delete</th>
                                 </thead>
                                 <tbody>
 
@@ -49,22 +55,26 @@ function showBOM_appendForm(node_id, end_item_id){
                                         <script type="text/javascript">
             var inputBlank = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".repeat({{ info.level }});
             document.write(inputBlank);
-
-
-
                                         </script>
-
-                                        ─ [{{item.code}}] {{ item.name }}
-                                    </td>
-                                    <td>
                                         {% if info.level == 0 %}
-                                        <a href="{% url 'metaData:endItem_detail' item.id %}">Detail</a>
+                                        <a href="{% url 'metaData:endItem_detail' item.id %}" style="color:inherit;">
+                                            ─ [{{item.code}}] {{ item.name }} {% if info.required != 0 %}
+                                            ({{info.required}}){% endif %}
+                                        </a>
                                         {% else %}
-                                        <a href="{% url 'metaData:material_detail' item.id %}">Detail</a>
+                                        <a href="{% url 'metaData:material_detail' item.id %}" style="color:inherit;">
+                                            ─ [{{item.code}}] {{ item.name }} {% if info.required != 0 %}
+                                            ({{info.required}}){% endif %}
+                                        </a>
                                         {% endif %}
                                     </td>
                                     <td>
                                         <a onclick="showBOM_appendForm({{info.node_id}},{{end_item.id}});" href="">Append</a>
+                                    </td>
+                                    <td>
+                                        {% if info.level != 0 %}
+                                        <a onclick="showBOM_updateForm({{info.node_id}});" href="">Update</a>
+                                        {% endif %}
                                     </td>
                                     <td>
                                         {% if info.level != 0 %}
@@ -158,6 +168,11 @@ btn_search.addEventListener(
     document.getElementById('seachForm').submit();
 
 });
+
+
+
+
+
 
 
 

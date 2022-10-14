@@ -37,10 +37,10 @@ class materialForm(forms.ModelForm):
 class bomForm(forms.ModelForm):
     class Meta:
         model = Node
-        fields = ['item','note']
+        fields = ['item','required']
         labels = {
             'item' : 'Item',
-            'note' : 'Note'
+            'required' : 'Required'
         }
 
 class otherCompanyForm(forms.ModelForm):
