@@ -69,11 +69,11 @@ function showBOM_updateForm(node_id){
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <a onclick="showBOM_appendForm({{info.node_id}},{{end_item.id}});" href="">Append</a>
+                                        <a onclick="showBOM_appendForm({{info.node_id}},{{end_item.id}});" href="javascript:void(0)">Append</a>
                                     </td>
                                     <td>
                                         {% if info.level != 0 %}
-                                        <a onclick="showBOM_updateForm({{info.node_id}});" href="">Update</a>
+                                        <a onclick="showBOM_updateForm({{info.node_id}});" href="javascript:void(0)">Update</a>
                                         {% endif %}
                                     </td>
                                     <td>

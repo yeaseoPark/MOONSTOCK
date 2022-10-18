@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -6,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .models import *
 from .forms import *
+from transaction.models import Inventory
 
 #end Item
 @login_required(login_url='common:login')
@@ -40,8 +42,13 @@ def endItem_add(request):
                 endItem.is_endItem = True
                 endItem.user = request.user
                 endItem.save()
+
                 node = Node(item = endItem)
                 Node.add_root(instance = node)
+
+                inventory = Inventory(referenceDate = endItem.registration_date, item = endItem, is_initial = True)
+                inventory.save()
+
                 return redirect('metaData:endItemIndex')
     else:
         form = ItemForm()
@@ -64,11 +71,20 @@ def endItem_modify(request,endItem_id):
         return redirect('metaData:endItemIndex')
     if request.method == 'POST':
         form = ItemForm(request.POST, instance = end_item)
+        error_inv = Inventory.objects.filter(Q(item__exact = end_item.id) & Q(referenceDate__lt = request.POST['registration_date']))
+        if error_inv:
+            messages.error(request, "해당 날짜 이후의 재고 내역이 존재합니다. 다시 한 번 확인해주세요.")
+            return redirect("metaData:endItem_modify", endItem_id = endItem_id)
         if form.is_valid():
             endItem = form.save(commit=False)
             endItem.user = request.user
             endItem.is_endItem = True
             endItem.save()
+
+            inventory = Inventory.objects.filter(Q(is_initial__exact=True) & Q(item = endItem))[0]
+            inventory.referenceDate = endItem.registration_date
+            inventory.save()
+
             return redirect("metaData:endItem_detail", endItem_id = endItem_id)
     else:
         form = ItemForm(instance=end_item)
@@ -82,6 +98,7 @@ def endItem_delete(request,endItem_id):
         messages.error(request,"부적절한 사용입니다")
         return redirect('metaData:endItemIndex')
     endItem.delete()
+
     return redirect("metaData:endItemIndex")
 
 
@@ -375,6 +392,10 @@ def material_add(request):
                 material.is_endItem = False
                 material.user = request.user
                 material.save()
+
+                inventory = Inventory(referenceDate = material.registration_date, item = material, is_initial = True)
+                inventory.save()
+
                 return redirect('metaData:materialIndex')
     else:
         form = ItemForm()
@@ -397,11 +418,19 @@ def material_modify(request,material_id):
         return redirect('metaData:materialIndex')
     if request.method == 'POST':
         form = ItemForm(request.POST, instance = material_item)
+        error_inv = Inventory.objects.filter(Q(item__exact = material_id) & Q(referenceDate__lt = request.POST['registration_date']))
+        if error_inv:
+            messages.error(request, "해당 날짜 이후의 재고 내역이 존재합니다. 다시 한 번 확인해주세요.")
+            return redirect("metaData:endItem_modify", endItem_id = material_id)
         if form.is_valid():
             material = form.save(commit=False)
             material.user = request.user
             material.is_endItem = False
             material.save()
+
+            inventory = Inventory.objects.filter(Q(is_initial=True) & Q(item = material))[0]
+            inventory.referenceDate = material.registration_date
+            inventory.save()
             return redirect("metaData:material_detail", material_id = material_id)
     else:
         form = ItemForm(instance=material_item)
@@ -414,5 +443,6 @@ def material_delete(request,material_id):
     if request.user != material.user:
         messages.error(request,"부적절한 사용입니다")
         return redirect('metaData:materialIndex')
+
     material.delete()
     return redirect("metaData:materialIndex")

@@ -2,57 +2,190 @@
 {% load metaDataFilter %}
 {% block content %}
 
-{% include 'metaData/navbar.html' %}
-{% include 'metaData/searchTab.html' %}
+{% include 'transaction/navbar.html' %}
+
+<script>
+function initialInv_modify(data_id, end_item_id){
+    window.open("modify/"+data_id +"/" ,"Modify Initial Inventory",
+    "width=600, height=330, top=10, left=10");
+}
+
+</script>
 
 <div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
     <div class="content" style="width:80%; text-align:left; min-height:80vh;">
 
         <!-- Inventory 테이블 보여주기 시작 -->
 
-        <div>
-            <div style="float:left; text-align:center; display:flex;">
 
-                <h2> ▶ Inventory</h2>
-            </div>
+        <div>
+            <h2> ▶ Inventory</h2>
         </div>
+        <hr/>
+        <div>
+            <div style="float:left; width:80%;">
+                <table>
+                    <thead style="">
+                    <th style="width:30%; color:white;">Item</th>
+                    <th style="width:5%;"></th>
+                    <th style="color:white;">From Date</th>
+                    <th style="width:5%;"></th>
+                    <th style="color:white;">To Date</th>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><select name="search_kw" id="search_kw" class="form-select form-select-sm mb-2"
+                                    aria-label=".form-select-sm example">
+                            <option value="all">
+                                All
+                            </option>
+                            {% for item in item_list %}
+                            <option value="{{item.id}}"
+                                    {% if item.id|stringformat:"i" == kw %} selected {%endif%}>
+                            [{{item.code}}] {{item.name}}
+                            </option>
+                            {% endfor %}
+                        </select></td>
+                        <td></td>
+                        <td><input type="date" id="search_fromDate" name="search_fromDate"
+                                   value="{{fromDate|default_if_none:''}}"
+                                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm"></td>
+                        <td>~</td>
+                        <td><input type="date" id="search_toDate" name="search_toDate"
+                                   value="{{toDate|default_if_none:''}}"
+                                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm"></td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+            <div style="float:right;">
+                <button class="btn btn-primary btn-sm" type="button" id="btn_search">Search</button>
+            </div>
+
+        </div>
+
         <br/>
+        <hr/>
+
+        <form id="seachForm" method="get" action="{% url 'transaction:inventoryIndex' %}">
+            <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'all' }}">
+            <input type="hidden" id="page" name="page" value="{{ page }}">
+            <input type="hidden" id="fromDate" name="fromDate" value="{{ fromDate }}">
+            <input type="hidden" id="toDate" name="toDate" value="{{ toDate }}">
+        </form>
+
 
         <div style="padding-bottom:20px; padding-top:20px">
             <table class="table table-hover">
                 <thead class="table-dark">
-                  <th style="width:5%">No.</th>
-                  <th>Reference Date</th>
-                  <th>Item</th>
-                  <th>Ammount</th>
+                <th style="width:5%">No.</th>
+                <th>Reference Date</th>
+                <th>Item</th>
+                <th>Amount</th>
+                <th></th>
                 </thead>
                 <tbody>
-                  {% for data in inventory_list %}
-                    <tr>
-                      <td>
-                      </td>
-                      <td>
+                {% for data in inventory_list %}
+                <tr>
+                    <td>
+                        {{ inventory_list.paginator.count|sub:inventory_list.start_index|sub:forloop.counter0|add:1 }}
+                    </td>
+                    <td>
                         {{data.referenceDate}}
-                      </td>
-                      <td>
+                    </td>
+                    <td>
                         {{data.item}}
-                      </td>
-                      <td>
-                        {{data.ammount}}
-                      </td>
-                    </tr>
-
-                  {% endfor %}
+                    </td>
+                    <td>
+                        {{data.amount}}
+                    </td>
+                    <td>
+                        {% if data.is_initial == True %}
+                        <a onclick="initialInv_modify({{data.id}});" href="javascript:void(0)">Edit Initial Inventory</a>
+                        {% else %}
+                        {{data.note}}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
 
                 </tbody>
             </table>
         </div>
         <!-- Inventory 테이블 보여주기 끝 -->
 
-    </div>
 
+        <!-- 페이징 처리 시작 -->
+        <ul class="pagination justify-content-center pagination-sm">
+            <!-- 이전페이지 -->
+            {% if inventory_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0)" width="30%"
+                   data-page="{{ inventory_list.previous_page_number }}"
+                >◀</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#" width="30%">◀</a>
+            </li>
+            {% endif %}
+            <!-- 페이지리스트 -->
+            {% for page_number in inventory_list.paginator.page_range %}
+            {% if page_number >= inventory_list.number|add:-5 and page_number <= inventory_list.number|add:5 %}
+            {% if page_number == inventory_list.number %}
+            <li class="page-item active" aria-current="page">
+                <a class="page-link"
+                   data-page="{{ page_number }}"
+                   href="javascript:void(0)">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{ page_number }}"
+                   href="javascript:void(0)">{{ page_number }}</a>
+            </li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+            <!-- 다음페이지 -->
+            {% if inventory_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{inventory_list.next_page_number}}" href="javascript:void(0)">▶</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">▶</a>
+            </li>
+            {% endif %}
+        </ul>
+        <!-- 페이징 처리 끝 -->
+
+    </div>
 </div>
 
+        <script>
+const page_elements = document.getElementsByClassName("page-link");
+Array.from(page_elements).forEach(
+    function(element){
+        element.addEventListener('click', function(){
+        document.getElementById('page').value = this.dataset.page;
+        document.getElementById('seachForm').submit();
+    });
+
+    });
+
+const btn_search = document.getElementById("btn_search");
+btn_search.addEventListener(
+'click', function(){
+    document.getElementById('kw').value = document.getElementById('search_kw').value;
+    document.getElementById('page').value = 1;
+    document.getElementById('fromDate').value = document.getElementById('search_fromDate').value;
+    document.getElementById('toDate').value = document.getElementById('search_toDate').value;
+    document.getElementById('seachForm').submit();
+
+});
+
+        </script>
 
 {% endblock %}
 

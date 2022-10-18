@@ -23,7 +23,8 @@
                     <div style="float:left; width:48%">
                         <label for="code" class="col-sm-2 col-form-label">Code</label>
                         <input type="text" id="code" name="code" value="{{form.code.value|default_if_none:''}}"
-                               class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+                               class="form-control form-control-sm mb-2" aria-label=".form-control-sm"
+                        >
                         <!--오류-->
                         {% if form.code.errors %}
                         <strong style="font-size:x-small; color:#dc3545;">
@@ -36,7 +37,7 @@
                         <strong style="font-size:x-small; color:#dc3545;">
                             {{ message }}
                         </strong>
-                        {% endif%}
+                        {% endif %}
                         {% endfor %}
                     </div>
                     <div style="display:inline-block; float:right; width:48% ">
@@ -58,8 +59,8 @@
                     <div style="float:left; width:48%">
 
                         <label for="registration_date" class="col-sm-5 col-form-label">Registration Date</label>
-                        <input type="date" id="registration_date" name="registration_date"
-                               value="{{form.registration_date.value|date:'Y-m-d'|default_if_none:''}}"
+                        <input type="datetime-local" id="registration_date" name="registration_date"
+                               value="{{form.registration_date.value|date:'Y-m-d'}}T{{form.registration_date.value|time:'H:i'}}"
                                class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
                         <!--오류-->
                         {% if form.registration_date.errors %}

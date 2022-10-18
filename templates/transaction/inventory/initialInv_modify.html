@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Initial Inventory</title>
+    <script src="https://kit.fontawesome.com/e420353eb3.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<!-- Static 요소 -->
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+<script src="{% static 'bootstrap.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'bootStrapModify.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'style1.css' %}">
+
+<div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
+    <div class="content" style="width:80%; text-align:left; min-height:40vh;text-align:center;">
+        <h4> Edit Initial Inventory</h4>
+        <h6> {{initial_inv.item}}</h6>
+
+        <form method="post" action="#" style="color: white;font-size:medium;">
+            {% csrf_token %}
+            <label for="amount" class="col-sm-5 col-form-label">Initial amount</label>
+            <input type="number" id="amount" name="amount" value="{{initial_inv.amount}}"
+                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+            <div class="d-grid gap-2" style="">
+                <button type="submit" class="btn btn-primary">SUBMIT</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
