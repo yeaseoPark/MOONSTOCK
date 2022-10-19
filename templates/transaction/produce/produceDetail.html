@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Producing Info</title>
+    <script src="https://kit.fontawesome.com/e420353eb3.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<!-- Static 요소 -->
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+<script src="{% static 'bootstrap.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'bootStrapModify.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'style1.css' %}">
+
+<div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
+    <div class="content" style="width:80%; text-align:left; min-height:40vh;text-align:center;">
+        <h4>Producing Information</h4>
+        <form method="post" action="#" style="color: white;font-size:medium;text-align:left;">
+            {% csrf_token %}
+            <!--Item 선택 start -->
+            <label for="itemNode" class="col-sm-2 col-form-label">Item</label>
+            <input type="text" id="itemNode" name="itemNode" value="{{produce.itemNode.item}}"
+                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm" readonly>
+
+            <!--Item 선택 end -->
+            <!-- 생산 수량 입력 start -->
+            <label for="amount" class="col-sm-5 col-form-label">Amount</label>
+            <input type="number" id="amount" name="amount" value="{{form.amount.value|default_if_none:''}}"
+                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm" readonly>
+            <!-- 생산 수량 입력 end -->
+
+            <!--referenceDate start-->
+            <label for="referenceDate" class="col-sm-5 col-form-label">Reference Date</label>
+            <input type="datetime-local" id="referenceDate" name="referenceDate"
+                   value="{{form.referenceDate.value|date:'Y-m-d'}}T{{form.referenceDate.value|time:'H:i'}}"
+                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm" readonly>
+            <!--referenceDate end-->
+
+            <div style="height:20px">
+
+            </div>
+            <div class="d-grid gap-2" style="">
+                <button class="btn btn-primary">Edit</button>
+                <button class="btn btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -5,23 +5,19 @@
 {% include 'transaction/navbar.html' %}
 
 <script>
-                        {% for message in messages %}
-                        {% if message.tags == 'error'%}
-                        alert('{{ message }}')
-                        {% endif%}
-                        {% endfor %}
+
 </script>
 
 <div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
     <div class="content" style="width:80%; text-align:left; min-height:80vh;">
 
-        <!-- BUY 테이블 보여주기 시작 -->
+        <!-- Sell 테이블 보여주기 시작 -->
 
 
         <div>
-            <h2 style="float:left;"> ▶ Buy Items</h2>
+            <h2 style="float:left;"> ▶ Sell Items</h2>
             <div style="float:right;">
-                <a class="btn btn-primary btn-sm" href="{% url 'transaction:buy_add' %}">Add</a>
+                <a class="btn btn-primary btn-sm" href="{% url 'transaction:sell_add' %}">Add</a>
             </div>
         </div>
         <br/>
@@ -73,14 +69,14 @@
         <br/>
         <hr/>
 
-        <form id="seachForm" method="get" action="{% url 'transaction:buyIndex' %}">
+        <form id="seachForm" method="get" action="{% url 'transaction:sellIndex' %}">
             <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'all' }}">
             <input type="hidden" id="page" name="page" value="{{ page }}">
             <input type="hidden" id="fromDate" name="fromDate" value="{{ fromDate }}">
             <input type="hidden" id="toDate" name="toDate" value="{{ toDate }}">
         </form>
 
-        <!-- BUY 테이블 보여주기 -->
+        <!-- Sell 테이블 보여주기 -->
         <div style="padding-bottom:20px; padding-top:20px">
             <table class="table table-hover">
                 <thead class="table-dark">
@@ -93,10 +89,10 @@
                 <th>Detail</th>
                 </thead>
                 <tbody>
-                {% for data in buy_list %}
+                {% for data in sell_list %}
                 <tr>
                     <td>
-                        {{ buy_list.paginator.count|sub:buy_list.start_index|sub:forloop.counter0|add:1 }}
+                        {{ sell_list.paginator.count|sub:sell_list.start_index|sub:forloop.counter0|add:1 }}
                     </td>
                     <td>
                         {{data.referenceDate}}
@@ -114,7 +110,7 @@
                         {{data.company}}
                     </td>
                     <td>
-                        <a href = "{% url 'transaction:buy_detail' data.id %}">Detail</a>
+                        <a href = "{% url 'transaction:sell_detail' data.id %}">Detail</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -127,10 +123,10 @@
         <!-- 페이징 처리 시작 -->
         <ul class="pagination justify-content-center pagination-sm">
             <!-- 이전페이지 -->
-            {% if buy_list.has_previous %}
+            {% if sell_list.has_previous %}
             <li class="page-item">
                 <a class="page-link" href="javascript:void(0)" width="30%"
-                   data-page="{{ buy_list.previous_page_number }}"
+                   data-page="{{ sell_list.previous_page_number }}"
                 >◀</a>
             </li>
             {% else %}
@@ -139,9 +135,9 @@
             </li>
             {% endif %}
             <!-- 페이지리스트 -->
-            {% for page_number in buy_list.paginator.page_range %}
-            {% if page_number >= buy_list.number|add:-5 and page_number <= buy_list.number|add:5 %}
-            {% if page_number == buy_list.number %}
+            {% for page_number in sell_list.paginator.page_range %}
+            {% if page_number >= sell_list.number|add:-5 and page_number <= sell_list.number|add:5 %}
+            {% if page_number == sell_list.number %}
             <li class="page-item active" aria-current="page">
                 <a class="page-link"
                    data-page="{{ page_number }}"
@@ -156,9 +152,9 @@
             {% endif %}
             {% endfor %}
             <!-- 다음페이지 -->
-            {% if buy_list.has_next %}
+            {% if sell_list.has_next %}
             <li class="page-item">
-                <a class="page-link" data-page="{{buy_list.next_page_number}}" href="javascript:void(0)">▶</a>
+                <a class="page-link" data-page="{{sell_list.next_page_number}}" href="javascript:void(0)">▶</a>
             </li>
             {% else %}
             <li class="page-item disabled">

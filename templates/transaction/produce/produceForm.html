@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Producing</title>
+    <script src="https://kit.fontawesome.com/e420353eb3.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<!-- Static 요소 -->
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+<script src="{% static 'bootstrap.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'bootStrapModify.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'style1.css' %}">
+
+<div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
+    <div class="content" style="width:80%; text-align:left; min-height:40vh;text-align:center;">
+        <h4>Producing</h4>
+        <form method="post" action="#" style="color: white;font-size:medium;text-align:left;">
+            {% csrf_token %}
+            <!--Item 선택 start -->
+            <label for="itemNode" class="col-sm-2 col-form-label">Item</label>
+            <select name="itemNode" id="itemNode" class="form-select form-select-sm mb-2"
+                    aria-label=".form-select-sm example">
+                {% if form.itemNode.value %}
+                {% else %}
+                <option disabled selected>
+                    Choose Item
+                </option>
+                {% endif %}
+
+                {% for node in item_node_list %}
+                <option value="{{node.id}}" {%if form.itemNode.item.value|stringformat:"i" == node.item.id|stringformat:"i" %} selected {% endif %}
+                {%if produce_id %} {%if form.item.value|stringformat:"i" != item.id|stringformat:"i" %}disabled{%endif%}
+                {% endif %}>
+                [{{node.item.code}}] {{node.item.name}}
+                </option>
+                {% endfor %}
+            </select>
+            <!--Item 선택 end -->
+            <!-- 생산 수량 입력 start -->
+            <label for="amount" class="col-sm-5 col-form-label">Amount</label>
+            <input type="number" id="amount" name="amount" value="{{form.amount.value|default_if_none:''}}"
+                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+            <!-- 생산 수량 입력 end -->
+
+            <!--referenceDate start-->
+            <label for="referenceDate" class="col-sm-5 col-form-label">Reference Date</label>
+            <input type="datetime-local" id="referenceDate" name="referenceDate"
+                   value="{{form.referenceDate.value|date:'Y-m-d'}}T{{form.referenceDate.value|time:'H:i'}}"
+                   class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+            <!--referenceDate end-->
+
+            {% for message in messages %}
+            {% if message.tags == 'error'%}
+            <strong style="font-size:x-small; color:#dc3545;">
+                {{ message }}
+            </strong>
+            {% endif%}
+            {% endfor %}
+
+            {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                <strong style="font-size:x-small; color:#dc3545;">{{ error }} </strong>
+                {% endfor %}
+            {% endfor %}
+            {% endif %}
+            <div style="height:20px">
+
+            </div>
+            <div class="d-grid gap-2" style="">
+                <button type="submit" class="btn btn-primary">SUBMIT</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

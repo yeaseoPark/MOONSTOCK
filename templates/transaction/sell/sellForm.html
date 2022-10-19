@@ -9,9 +9,9 @@
          style="background-color:rgba(0, 0, 0, 0.4); text-align:left;width:80%; text-align:left; min-height:80vh;">
         <form method="post" action="#" style="color: white;font-size:medium;">
             {% if form.item.value %}
-            <h1 style="text-align:center">Edit Buying Transaction</h1>
+            <h1 style="text-align:center">Edit Selling Transaction</h1>
             {% else %}
-            <h1 style="text-align:center">Add Buying Transaction</h1>
+            <h1 style="text-align:center">Add Selling Transaction</h1>
             {% endif %}
 
             <br/>
@@ -32,7 +32,7 @@
 
                             {% for item in item_list %}
                             <option value="{{item.id}}" {%if form.item.value|stringformat:"i" == item.id|stringformat:"i" %} selected {% endif %}
-                            {%if buy_id %} {%if form.item.value|stringformat:"i" != item.id|stringformat:"i" %}disabled{%endif%} {% endif %}>
+                            {%if sell_id %} {%if form.item.value|stringformat:"i" != item.id|stringformat:"i" %}disabled{%endif%} {% endif %}>
                                 [{{item.code}}] {{item.name}}
                             </option>
                             {% endfor %}
