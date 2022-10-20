@@ -2,22 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e277158a-97f9-45a9-8af8-4f0bb336a0a7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/transaction/buy/buyDetail.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/transaction/produce/produceDetail.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/transaction/produce/produceForm.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/transaction/produce/produceIndex.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/transaction/sell/sellDetail.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/transaction/sell/sellForm.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/transaction/sell/sellIndex.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/transaction/buy/buyForm.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/transaction/buy/buyForm.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/transaction/buy/buyIndex.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/transaction/buy/buyIndex.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/transaction/inventory/initialInv_modify.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/transaction/inventory/initialInv_modify.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/transaction/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/transaction/navbar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transaction/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/transaction/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transaction/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/transaction/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transaction/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/transaction/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/metaData/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaData/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/transaction/produce/produceDetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/transaction/produce/produceDetail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/transaction/produce/produceForm.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/transaction/produce/produceForm.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transaction/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/transaction/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transaction/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/transaction/views.py" afterDir="false" />
     </list>
@@ -46,15 +35,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "D:/project/MOONSTOCK/templates/transaction/produce",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/project/MOONSTOCK/templates/transaction/produce&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\project\MOONSTOCK\templates\transaction\produce" />

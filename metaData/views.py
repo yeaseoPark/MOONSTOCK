@@ -187,6 +187,7 @@ def bom_delete(request, node_id):
     if item.user != request.user:
         messages.error(request,"인가된 사용자가 아닙니다")
         return redirect("metaData:bomIndex")
+
     node.delete()
     return redirect("metaData:bomIndex")
 

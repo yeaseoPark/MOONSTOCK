@@ -25,6 +25,8 @@ urlpatterns = [
     # produce urls
     path('produce/', views.produceIndex, name="produceIndex"),
     path('produce/add/', views.produce_add, name="produce_add"),
-    path('produce/detail/<int:produce_id>/', views.produce_detail, name = "produce_detail")
+    path('produce/detail/<int:produce_id>/', views.produce_detail, name="produce_detail"),
+    path('produce/modify/<int:produce_id>/', views.produce_modify, name="produce_modify"),
+    path('produce/delete/<int:produce_id>/', views.produce_delete, name="produce_delete"),
 
 ]

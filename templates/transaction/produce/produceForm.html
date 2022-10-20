@@ -22,20 +22,18 @@
             <label for="itemNode" class="col-sm-2 col-form-label">Item</label>
             <select name="itemNode" id="itemNode" class="form-select form-select-sm mb-2"
                     aria-label=".form-select-sm example">
-                {% if form.itemNode.value %}
-                {% else %}
-                <option disabled selected>
-                    Choose Item
-                </option>
-                {% endif %}
+                    <option disabled selected>
+                        Choose Item
+                    </option>
 
-                {% for node in item_node_list %}
-                <option value="{{node.id}}" {%if form.itemNode.item.value|stringformat:"i" == node.item.id|stringformat:"i" %} selected {% endif %}
-                {%if produce_id %} {%if form.item.value|stringformat:"i" != item.id|stringformat:"i" %}disabled{%endif%}
-                {% endif %}>
-                [{{node.item.code}}] {{node.item.name}}
-                </option>
-                {% endfor %}
+
+                    {% for node in item_node_list %}
+                    <option value="{{node.id}}" {%if produce.itemNode.item.id|stringformat:"i" == node.item.id|stringformat:"i" %} selected {% endif %}
+                    {%if produce_id %} {%if produce.itemNode.item.id|stringformat:"i" != node.item.id|stringformat:"i" %} disabled {% endif %} {%endif%}
+                    >
+                    [{{node.item.code}}] {{node.item.name}}
+                    </option>
+                    {% endfor %}
             </select>
             <!--Item 선택 end -->
             <!-- 생산 수량 입력 start -->

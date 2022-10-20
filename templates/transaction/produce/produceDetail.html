@@ -41,12 +41,32 @@
 
             </div>
             <div class="d-grid gap-2" style="">
-                <button class="btn btn-primary">Edit</button>
-                <button class="btn btn-danger">Delete</button>
+                <a class="btn btn-primary" href ="{% url 'transaction:produce_modify' produce_id %}">Edit</a>
+                <a class="delete btn btn-danger"  data-uri = "{% url 'transaction:produce_delete' produce_id %}" href="javascript:void(0)">Delete</a>
+
             </div>
         </form>
     </div>
 </div>
 
+<script type="text/javascript">
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(
+function(element){
+element.addEventListener(
+'click', function(){
+if(confirm("정말로 삭제하시겠습니까?")){
+location.href = this.dataset.uri;
+};
+    });
+});
+
+                        {% for message in messages %}
+                        {% if message.tags == 'error'%}
+                        alert('{{ message }}')
+                        {% endif%}
+                        {% endfor %}
+
+</script>
 </body>
 </html>

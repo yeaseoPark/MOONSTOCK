@@ -650,5 +650,396 @@ def produce_detail(request, produce_id):
     context = {'form': form, 'produce_id':produce_id,'produce':produce}
     return render(request, 'transaction/produce/produceDetail.html', context)
 
+@login_required(login_url='common:login')
+def produce_modify(request, produce_id):
+    produce = get_object_or_404(Produce, pk=produce_id)
+    notModifiedDate = produce.referenceDate
+    notModifiedAmount = produce.amount
+
+    producedItem = produce.itemNode.item
+    ingredientQuerySet = produce.itemNode.get_children()
+
+    if produce.itemNode.item.user != request.user:
+        messages.error(request, "인가된 사용자가 아닙니다")
+        return redirect("transaction:sellIndex")
+    if request.method == 'POST':
+        form = produceForm(request.POST, instance = produce)
+        if form.is_valid():
+            modifiedProduce = form.save(commit = False)
+            modifiedDate = modifiedProduce.referenceDate
+            modifiedAmount = modifiedProduce.amount
+
+            # 에러검사 1) 생산된 아이템의 inventory 의 unique 키 검사
+            error_inv = Inventory.objects.filter(Q(item__exact=producedItem) & Q(referenceDate__exact=modifiedDate))
+            if modifiedDate != notModifiedDate and len(error_inv) > 0:
+                messages.error(request, "생산 품목에서 해당 시간에 입출고된 기록이 있습니다. 동시에 입출고를 하실 수 없으니 다시 확인해주세요.")
+                return redirect("transaction:produce_modify", produce_id=produce_id)
+
+            # 에러검사 2) 재료에 대한 unique 검사
+            for node in ingredientQuerySet:
+                ingredient = node.item
+                error_inv = Inventory.objects.filter(Q(item__exact=ingredient) & Q(referenceDate__exact=modifiedDate))
+                if modifiedDate != notModifiedDate and len(error_inv) > 0:
+                    messages.error(request,
+                                   f"{ingredient.name} 품목 에서 해당 시간에 입출고된 기록이 있습니다. 동시에 입출고를 하실 수 없으니 다시 확인해주세요.")
+                    return redirect("transaction:produce_modify", produce_id=produce_id)
+
+                # 에러검사 3) 재료의 modifiedDate 는 최초 입고일 이후여야 한다.
+                initial_date = Inventory.objects.filter(Q(is_initial__exact=True) & Q(item__exact=ingredient))[0].referenceDate
+                if modifiedDate < initial_date:
+                    messages.error(request, f"재료, {ingredient.name}의 최초 등록일 이전에 생산하실 수 없습니다.")
+                    return redirect("transaction:produce_modify", produce_id=produce_id)
+
+            # 에러검사 4) 생산품의 modifiedDate 는 최초 입고일 이후여야 한다.
+            initial_date = Inventory.objects.filter(Q(is_initial__exact = True) & Q(item__exact=producedItem))[0].referenceDate
+            if modifiedDate < initial_date :
+                messages.error(request, "생산품의 최초 등록일 이전에 생산하실 수 없습니다.")
+                return redirect("transaction:produce_modify", produce_id=produce_id)
+
+            if notModifiedDate < modifiedDate:
+                '''
+                1. 수정 전 날짜가 더 빠르다 : 시간 순서는 수정 전 -> 수정 후
+                2. 영향권이 더 줄어든다.
+                3.
+                두 날짜 사이(lost_influenced_inv)에서 
+                - 생산된 품목은 영향권이 줄어들었으니 수가 작아지고
+                - 생산에 쓰인 소모품은 영향권이 줄어들었으니 수가 늘어난다.
+                - 원래는 notModifiedAmount 의 영향을 받았는데 없어진 것임으로 이것 만큼 수가 작아지고 늘어난다.
+                - notModifiedAmount은 항상 양수임으로 소모품에 대한 검사는 필요 없다.
+                4. 수정 후 이후의 날짜()는 
+                - notModifiedAmount, modifiedAmount 양 측에 영향을 받는다.
+                - 그런데 modifiedAmount 로 영향이 수정되어야 함으로
+                - 생산된 품목은 modifiedAmount - notModifiedAmount 만큼 늘어나고
+                - 소모품은 modifiedAmount - notModifiedAmount 만큼 줄어든다.
+                5. notModifiedDate 이전에는 바뀐 것이 없다.
+                6. notModifiedDate의 Inventory 는 위의 사항을 수정한 후 modifiedDate 직전의 Inventory 를 기준으로 수정한다.
+                '''
+                # 1. 수량에 대한 에러 검사 시작
+                lost_influenced_inv_producedItem = Inventory.objects.filter(Q(item__exact = producedItem) &
+                                                               Q(referenceDate__gt = notModifiedDate) &
+                                                               Q(referenceDate__lt = modifiedDate))
+
+                modify_influence_inv_producedItem = Inventory.objects.filter(Q(item__exact = producedItem) &
+                                                                Q(referenceDate__gt = modifiedDate))
+
+                # 1) lost_influenced_inv_producedItem 에 대한 검사
+                error_inv = lost_influenced_inv_producedItem.filter(amount__lt = notModifiedAmount)
+                if len(error_inv) > 0:
+                    messages.error(request,"생산품 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                    return redirect("transaction:produce_modify", produce_id=produce_id)
+
+                # 2) modifiedAmount 에 대한 검사
+                # 2-1) 생산 품목에 대한 검사
+                error_inv = modify_influence_inv_producedItem.filter(amount__lt = notModifiedAmount - modifiedAmount)
+                if len(error_inv) > 0:
+                    messages.error(request,"생산품 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                    return redirect("transaction:produce_modify", produce_id=produce_id)
+
+                check_inv = Inventory.objects.filter(Q(item__exact = producedItem) &
+                                                     Q(referenceDate__lt = modifiedDate) & ~Q(referenceDate__exact =notModifiedDate)).order_by('referenceDate')[0]
+
+                if check_inv.amount - notModifiedAmount + modifiedAmount < 0:
+                    messages.error(request, "생산품 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                    return redirect("transaction:produce_modify", produce_id=produce_id)
+                
+                # 2-2) 소모품에 대한 검사
+                for node in ingredientQuerySet:
+                    ingredient = node.item
+                    # 2-2-1) 날짜 이후 해당 소모품의 부족 검사
+                    requirement_per_unit = node.required
+                    error_inv = Inventory.objects.filter(Q(item__exact = ingredient) &
+                                                         Q(referenceDate__gt = modifiedDate) &
+                                                         Q(amount__lt = (modifiedAmount - notModifiedAmount) * requirement_per_unit))
+                    if len(error_inv) > 0:
+                        messages.error(request, f"{ingredient.name}의 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                        return redirect("transaction:produce_modify", produce_id=produce_id)
+                    # 2-2-2) 날짜의 소모품의 부족 검사
+                    check_inv = Inventory.objects.filter(Q(item__exact = ingredient) &Q(referenceDate__lt = modifiedDate) & ~Q(referenceDate__exact =notModifiedDate)).order_by('-referenceDate')[0]
+                    if check_inv.amount + notModifiedAmount * requirement_per_unit - modifiedAmount * requirement_per_unit < 0:
+                        messages.error(request, f"{ingredient.name}의 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                        return redirect("transaction:produce_modify", produce_id=produce_id)
+
+                # 수량에 대한 에러 검사 끝
+                
+                # 2. Inventory 수정 시작
+                # 2-1) 생산품 수정
+                # 2-1-1) 두 날짜 사이에서 생산품이 notModifiedAmount만큼 줄어든다.
+                for inv in lost_influenced_inv_producedItem:
+                    inv.amount = inv.amount - notModifiedAmount
+                    inv.save()
+
+                # 2-1-2) modify 이후의 생산품이 modifiedAmount- notModifiedAmount 만큼 늘어난다.
+                for inv in modify_influence_inv_producedItem:
+                    inv.amount = inv.amount -notModifiedAmount + modifiedAmount
+                    inv.save()
+
+                # 2-1-3) 기존의 notModifiedDate
+                latest_inventory = Inventory.objects.filter(Q(item__exact=producedItem) &
+                                                            Q(referenceDate__lt=modifiedDate)).order_by('-referenceDate')[0]
+                current_inventory = Inventory.objects.filter(Q(item__exact=producedItem) &
+                                                             Q(referenceDate__exact = notModifiedDate))[0]
+
+                current_inventory.amount = latest_inventory.amount + modifiedAmount
+                current_inventory.note = f"생산 - {modifiedAmount}개"
+                current_inventory.referenceDate = modifiedDate
+                current_inventory.save()
+
+                # 2-2) 재료 수정
+                for node in ingredientQuerySet:
+                    ingredient = node.item
+                    requirement_per_unit = node.required
+
+                    lost_influenced_inv_ingredient = Inventory.objects.filter(Q(item__exact = ingredient) &
+                                                                              Q(referenceDate__gt = notModifiedDate) &
+                                                                              Q(referenceDate__lt = modifiedDate))
+
+                    modify_influence_inv_ingredient = Inventory.objects.filter(Q(item__exact = ingredient) &
+                                                                               Q(referenceDate__gt = modifiedDate))
+
+                    for inv in lost_influenced_inv_ingredient:
+                        inv.amount = inv.amount + notModifiedAmount * requirement_per_unit
+                        inv.save()
+
+                    for inv in modify_influence_inv_ingredient:
+                        inv.amount = inv.amount + notModifiedAmount * requirement_per_unit - modifiedAmount * requirement_per_unit
+                        inv.save()
+
+                    latest_inventory = Inventory.objects.filter(Q(item__exact=ingredient) &
+                                                                Q(referenceDate__lt=modifiedDate) &
+                                                                ~Q(referenceDate__exact =notModifiedDate)).order_by('-referenceDate')[0]
+                    current_inventory = Inventory.objects.filter(Q(item__exact=ingredient) &
+                                                                 Q(referenceDate__exact = notModifiedDate))[0]
+
+                    current_inventory.amount = latest_inventory.amount - modifiedAmount * requirement_per_unit
+                    print(current_inventory.amount)
+                    print(latest_inventory.amount)
+                    print(latest_inventory.referenceDate)
+                    current_inventory.note = f"[{producedItem}]생산(소비) - {modifiedAmount * requirement_per_unit}개"
+                    current_inventory.referenceDate = modifiedDate
+                    current_inventory.save()
+                # 2. Inventory 수정 끝
+
+                # 3. Produce 수정
+                modifiedProduce.save()
+                return HttpResponse('<script type="text/javascript">alert("수정 성공");opener.location.reload();window.close()</script>')
+            elif modifiedDate < notModifiedDate:
+                '''
+                1. 수정 후 날짜가 더 빠르다 : 시간 순서는 수정 후 -> 수정 전
+                2. 영향권이 더 늘어난다
+                3. 두 날짜 사이(expand_influence)에서 
+                - 생산된 품목은 영향권이 늘어났으니 수가 modifiedAmount 만큼 많아지고
+                - 생산에 쓰인 소모품은 영향권이 늘어났으니 modifiedAmount 만큼 수가 줄어든다. (검사필)
+                4. 수정 전 이후의 날짜(original_influecne)는 
+                - notModifiedAmount, modifiedAmount 양 측에 영향을 받는다.
+                - 그런데 modifiedAmount 로 영향이 수정되어야 함으로
+                - 생산된 품목은 modifiedAmount - notModifiedAmount 만큼 늘어나고
+                - 소모품은 modifiedAmount - notModifiedAmount 만큼 줄어든다.
+                5. ModifiedDate 이전에는 바뀐 것이 없다.
+                6. notModifiedDate의 Inventory 는 위의 사항을 수정한 후 modifiedDate 직전의 Inventory 를 기준으로 수정한다.
+                '''
+                # 1. Inventory 검사 시작
+                # 1) 생산품 검사 시작
+                total_Inv_producedItem = Inventory.objects.filter(item__exact = producedItem)
+                expand_influence_producedItem = total_Inv_producedItem.filter(Q(referenceDate__gt = modifiedDate) &
+                                                                              Q(referenceDate__lt = notModifiedDate))
+                original_influence_producedItem = total_Inv_producedItem.filter(Q(referenceDate__gt = notModifiedDate))
+
+                # 1-1) 두 기간 사이의 검사 --> 늘어난 것이니 검사 필요 X
+                # 1-2) 원래 영향을 받던 곳의 검사
+                error_inv = original_influence_producedItem.filter(amount__lt = notModifiedAmount - modifiedAmount)
+                if len(error_inv) > 0:
+                    messages.error(request, "생산품 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                    return redirect("transaction:produce_modify", produce_id=produce_id)
+                # 1-3) modifiedDate 의 검사 --> 늘어난 것이니 검사 필요 X
+
+                # 2) 소모품 검사 시작
+                for node in ingredientQuerySet:
+                    ingredient = node.item
+                    requirement_per_unit = node.required
+
+                    total_inv_ingredient = Inventory.objects.filter(item__exact = ingredient)
+                    expand_influence_ingredient = total_inv_ingredient.filter(Q(referenceDate__gt = modifiedDate) &
+                                                                              Q(referenceDate__lt = notModifiedDate))
+                    original_influence_ingredient = total_inv_ingredient.filter(Q(referenceDate__gt = notModifiedDate))
+
+                    # 2-1) 두 기간 사이의 검사
+                    error_inv = expand_influence_ingredient.filter(amount__lt = modifiedAmount * requirement_per_unit)
+                    if len(error_inv) > 0:
+                        messages.error(request, f"{ingredient.name}의 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                        return redirect("transaction:produce_modify", produce_id=produce_id)
+                    # 2-2) 원래 영향을 받았던 곳의 검사
+                    error_inv = original_influence_ingredient.filter(amount__lt = (modifiedAmount - notModifiedAmount) * requirement_per_unit)
+                    if len(error_inv) > 0:
+                        messages.error(request, f"{ingredient.name}의 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                        return redirect("transaction:produce_modify", produce_id=produce_id)
+                    # 2-3) modifiedDate 의 검사
+                    latest_inv = total_inv_ingredient.filter(Q(referenceDate__lt = modifiedDate) & ~Q(referenceDate__exact =notModifiedDate)).order_by('-referenceDate')[0]
+                    if latest_inv.amount - modifiedAmount * requirement_per_unit < 0:
+                        messages.error(request, f"{ingredient.name}의 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                        return redirect("transaction:produce_modify", produce_id=produce_id)
+                # 1. Inventory 검사 끝
+
+                # 2. Inventory 수정 시작
+                # 1) 생산품 수정
+                # 1-1) 두 기간 사이의 생산품 수정
+                for inv in expand_influence_producedItem:
+                    inv.amount = inv.amount + modifiedAmount
+                    inv.save()
+
+                # 1-2) 원래 영향을 받았던 기간의 생산품 수정
+                for inv in original_influence_producedItem:
+                    inv.amount = inv.amount + modifiedAmount - notModifiedAmount
+                    inv.save()
+
+                # 1-3) notModifiedDate 에 있는 inventory 를 modifiedDate 로 옮긴다.
+                latest_inv = total_Inv_producedItem.filter(Q(referenceDate__lt = modifiedDate) & ~Q(referenceDate__exact =notModifiedDate)).order_by('-referenceDate')[0]
+                current_inv = total_Inv_producedItem.filter(referenceDate__exact = notModifiedDate)[0]
+
+                current_inv.referenceDate = modifiedDate
+                current_inv.amount = latest_inv.amount + modifiedAmount
+                current_inv.note = f"생산 - {modifiedAmount}개"
+                current_inv.save()
+
+                # 2) 소모품 수정
+                for node in ingredientQuerySet:
+                    ingredient = node.item
+                    requirement_per_unit = node.required
+
+                    total_inv_ingredient = Inventory.objects.filter(item__exact = ingredient)
+                    expand_influence_ingredient = total_inv_ingredient.filter(Q(referenceDate__gt=modifiedDate) &
+                                                                              Q(referenceDate__lt=notModifiedDate))
+                    original_influence_ingredient = total_inv_ingredient.filter(Q(referenceDate__gt=notModifiedDate))
+                    # 2-1) 두 기간 사이의 Inventory 수정
+                    for inv in expand_influence_ingredient:
+                        inv.amount = inv.amount - modifiedAmount * requirement_per_unit
+                        inv.save()
+
+                    # 2-2) 원래 영향을 받았던 곳 수정
+                    for inv in original_influence_ingredient:
+                        inv.amount = inv.amount - modifiedAmount * requirement_per_unit + notModifiedAmount * requirement_per_unit
+                        inv.save()
+
+                    # 2-2) notModifiedDate 에 있는 inventory 를 modifiedDate 로 옮긴다.
+                    latest_inv = total_inv_ingredient.filter(Q(referenceDate__lt=modifiedDate) & ~Q(referenceDate__exact =notModifiedDate)).order_by('-referenceDate')[0]
+                    current_inv = total_inv_ingredient.filter(referenceDate__exact=notModifiedDate)[0]
+
+                    current_inv.referenceDate = modifiedDate
+                    current_inv.amount = latest_inv.amount - modifiedAmount * requirement_per_unit
+                    current_inv.note = f"[{producedItem}]생산(소비) - {modifiedAmount * requirement_per_unit}개"
+                    current_inv.save()
+
+                # 2. Inventory 수정 끝
+                # 3. Produce 수정
+                modifiedProduce.save()
+                return HttpResponse('<script type="text/javascript">alert("수정 성공");opener.location.reload();window.close()</script>')
+            else:
+                '''
+                1. 수정 전후의 날짜가 같다 (수량만 바뀌었다)
+                2. 수량 체크만 해주면 된다.
+                '''
+                # 1. 수량 체크
+                # 1-1) 생산품
+                total_Inv_producedItem = Inventory.objects.filter(item__exact=producedItem)
+                affected_producedItem = total_Inv_producedItem.filter(referenceDate__gte = modifiedDate)
+
+                error_inv = affected_producedItem.filter(amount__lt = notModifiedAmount - modifiedAmount)
+                if len(error_inv) > 0:
+                    messages.error(request, "생산품 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                    return redirect("transaction:produce_modify", produce_id=produce_id)
+
+                # 1-2) 소모품
+                for node in ingredientQuerySet:
+                    ingredient = node.item
+                    requirement_per_unit = node.required
+
+                    total_inv_ingredient = Inventory.objects.filter(item__exact = ingredient)
+                    affected_ingredient = total_inv_ingredient.filter(referenceDate__gte = modifiedDate)
+
+                    error_inv =affected_ingredient.filter(amount__lt = (modifiedAmount - notModifiedAmount) * requirement_per_unit)
+                    if len(error_inv) > 0:
+                        messages.error(request, "생산품 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+                        return redirect("transaction:produce_modify", produce_id=produce_id)
+
+                # 2. Inventory 수정
+                # 2-1) 생산품 수정
+                for inv in affected_producedItem:
+                    inv.amount = inv.amount - notModifiedAmount + modifiedAmount
+                    if inv.referenceDate == modifiedDate:
+                        inv.note = f"생산 - {modifiedAmount}개"
+                    inv.save()
+
+                # 2-2) 소모품 수정
+                for node in ingredientQuerySet:
+                    ingredient = node.item
+                    requirement_per_unit = node.required
+
+                    total_inv_ingredient = Inventory.objects.filter(item__exact=ingredient)
+                    affected_ingredient = total_inv_ingredient.filter(referenceDate__gte=modifiedDate)
+
+                    for inv in affected_ingredient:
+                        inv.amount = inv.amount + (notModifiedAmount - modifiedAmount) * requirement_per_unit
+                        if inv.referenceDate == modifiedDate:
+                            inv.note = f"[{producedItem}]생산(소비) - {modifiedAmount * requirement_per_unit}개"
+                        inv.save()
+                # 3. Produce 저장
+                modifiedProduce.save()
+                return HttpResponse('<script type="text/javascript">alert("수정 성공");opener.location.reload();window.close()</script>')
+
+    else:
+        form = produceForm(instance = produce)
+
+    allNode = list(Node.objects.filter(item__user__exact = request.user))
+    item_node_list = list()
+    for node in allNode:
+        if node.is_leaf() == False:
+            item_node_list.append(node)
+    context = {'form':form, 'produce_id':produce_id,'item_node_list':item_node_list,'produce':produce}
+    return render(request,"transaction/produce/produceForm.html", context)
+
+@login_required(login_url='common:login')
+def produce_delete(request, produce_id):
+    produce = get_object_or_404(Produce, pk = produce_id)
+    if produce.itemNode.item.user != request.user:
+        messages.error(request, "인가된 사용자가 아닙니다")
+        return redirect("transaction:sellIndex")
+    '''
+    삭제하는 것 = 영향력이 사라진다
+    -> 생산품은 줄어들고 소모품은 늘어난다
+    -> 생산품에 대해서만 수량 조사를 한다.
+    '''
+    delete_date = produce.referenceDate
+    delete_amount = produce.amount
+
+    check_inv = Inventory.objects.filter(Q(item__exact = produce.itemNode.item) & Q(referenceDate__gt = delete_date))
+    error_inv = check_inv.filter(amount__lt = delete_amount)
+    if len(error_inv) >0:
+        messages.error(request, "생산품 수량이 부족해지는 구간이 있습니다. 날짜 혹은 수량을 다시 확인해주세요")
+        return redirect("transaction:produce_detail", produce_id=produce_id)
+
+    # Inventory 삭제
+    # 1) 생산품 삭제
+    for inv in check_inv:
+        inv.amount = inv.amount - delete_amount
+        inv.save()
+    Inventory.objects.filter(Q(item__exact = produce.itemNode.item) & Q(referenceDate__exact = delete_date)).delete()
+    # 2) 소모품 삭제
+    ingredient_queryset = produce.itemNode.get_children()
+    for node in ingredient_queryset:
+        ingredient = node.item
+        requirement_per_unit = node.required
+
+        delete_inv = Inventory.objects.filter(Q(item__exact = ingredient) & Q(referenceDate__exact = delete_date))
+        check_inv = Inventory.objects.filter(Q(item__exact=ingredient) & Q(referenceDate__gt =delete_date))
+        for inv in check_inv:
+            inv.amount = inv.amount + delete_amount * requirement_per_unit
+            inv.save()
+        delete_inv.delete()
+
+    # produce 삭제
+    produce.delete()
+    return HttpResponse('<script type="text/javascript"> alert("삭제 성공");opener.location.reload();window.close()</script>')
+
+
+
 
 
