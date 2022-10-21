@@ -1,29 +1,38 @@
 {% extends "base.html" %}
+{% load metaDataFilter %}
 {% block content %}
-
 <div class="wrapper">
-
-
     <br/>
-    <div class="content" style="background-color:rgba(0, 0, 0, 0.4); text-align:left;">
-        <form method="post" action="{% url 'common:signup' %}" style="color: white;font-size:medium;">
-            <h1 style="text-align:center">Sign Up</h1>
+    <div class="content" style="background-color:rgba(0, 0, 0, 0.4); text-align:left; width:70%;">
+        <form method="post" action="#" style="color: white;font-size:medium;">
+            <h1 style="text-align:center">
+                {% if not user.is_authenticated %}
+                Sign Up
+                {%else%}
+                Edit Member Information
+                {% endif %}
+
+            </h1>
             <br/>
             {%csrf_token%}
             <div style="display:flex">
-                <div id="userInfo" style="padding-right:2%">
+                <div id="userInfo" style="width:48%;padding-right:2%">
                     ▶ Authentication Information
                     <br/>
-                    <label for="username" class="col-sm-2 col-form-label">User ID </label>
+                    <label for="username" class="col-sm-5 col-form-label">User ID </label>
                     <input type="text" id="username" name="username" value="{{form.username.value|default_if_none:''}}"
-                           class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
+                           class="form-control form-control-sm mb-2" aria-label=".form-control-sm"
+                    {% if user.is_authenticated %}readonly {% endif %}
+                    >
                     {% if form.username.errors %}
                     <strong style="font-size:x-small; color:#dc3545;">
                         {{ form.username.errors }}
                     </strong>
                     {% endif %}
 
+
                     <div style="display:flex;">
+                        {% if not user.is_authenticated %}
                         <div style="width:45%">
                             <label for="password1" class="col col-form-label">Password</label>
                             <input type="password" id="password1" name="password1"
@@ -39,19 +48,22 @@
                                    class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
 
                         </div>
+                        {% else %}
+
+                        {% endif %}
                     </div>
                     {% if form.password1.errors %}
                     <strong style="font-size:x-small; color:#dc3545;">
-                        {{ form.password1.errors }}
+                       password 1 {{ form.password1.errors }}
                     </strong>
                     {% endif %}
                     {% if form.password2.errors %}
                     <strong style="font-size:x-small; color:#dc3545;">
-                        {{ form.password2.errors }}
+                        password 2 {{ form.password2.errors }}
                     </strong>
                     {% endif %}
 
-                    <label for="email" class="col-sm-2 col-form-label">E-mail</label>
+                    <label for="email" class="col-sm-5 col-form-label">E-mail</label>
                     <input type="text" id="email" name="email" value="{{form.email.value|default_if_none:''}}"
                            class="form-control form-control-sm mb-2" aria-label=".form-control-sm">
 
@@ -81,15 +93,21 @@
                         <div style="width:10%">
                         </div>
                         <div style="width:45%;">
-                            <label for="company_sector" class="col col-form-label">Complany Sector</label>
+                            <label for="company_sector" class="col col-form-label">Complany Sector
+                            </label>
                             <select name="company_sector" id="company_sector" class="form-select form-select-sm mb-2"
                                     aria-label=".form-select-sm example">
+                                {% if not user.is_authenticated %}
                                 <option selected disabled>Open this select menu</option>
+                                {% endif %}
                                 {% for sector in form.company_sector.field.choices %}
+                                {% if sector.0 != '' %}
                                 <option value="{{ sector.0 }}"
-                                        {% if sector.0 == form.company_sector.value %} checked {% endif %}>
+                                        {% if sector.0 == form.company_sector.value %} selected {% endif %}>
                                     {{ sector.1 }}
+                                    <br/>
                                 </option>
+                                {%endif%}
                                 {% endfor %}
                             </select>
                             {% if form.company_sector.errors %}

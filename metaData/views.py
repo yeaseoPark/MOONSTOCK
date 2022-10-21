@@ -7,7 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .models import *
 from .forms import *
-from transaction.models import Inventory
+from transaction.models import Inventory, Produce
+
 
 #end Item
 @login_required(login_url='common:login')
@@ -127,11 +128,17 @@ def bomIndex(request):
             temp_list.append((item.item, info))
 
     temp_dict = dict()
+    endItem_produced = dict()
+    for item in endItem_list:
+        check = Produce.objects.filter(Q(itemNode__item__exact = item))
+        if len(check) > 0:
+            endItem_produced[item.id] = True
 
     for item, info in annotated_list:
         if item.item.user == request.user:
             info['node_id'] = item.id
             info['required'] = item.required
+
             if info['level'] == 0:
                 end_Item = item.item
                 temp_dict[end_Item] = [(end_Item, info)]
@@ -143,7 +150,7 @@ def bomIndex(request):
     page_obj = paginator.get_page(page)
 
     annotated_list = temp_list
-    context = {'annotated_list': annotated_list, 'annotated_dict':temp_dict,'endItem_list':page_obj, 'page':page,'kw':kw}
+    context = {'annotated_list': annotated_list, 'annotated_dict':temp_dict,'endItem_list':page_obj, 'page':page,'kw':kw,'endItem_produced':endItem_produced}
     return render(request, 'metaData/BOM/bomIndex.html', context)
 
 @login_required(login_url='common:login')
@@ -181,13 +188,12 @@ def bom_add(request, node_id):
     return render(request, 'metaData/BOM/bomForm.html', context)
 @login_required(login_url='common:login')
 def bom_delete(request, node_id):
-
     node = Node.objects.get(pk =node_id)
+    required_per_unit = node.required
     item = node.item
     if item.user != request.user:
         messages.error(request,"인가된 사용자가 아닙니다")
         return redirect("metaData:bomIndex")
-
     node.delete()
     return redirect("metaData:bomIndex")
 

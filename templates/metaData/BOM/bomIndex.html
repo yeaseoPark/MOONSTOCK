@@ -16,6 +16,7 @@ function showBOM_updateForm(node_id){
 }
 
 
+
 </script>
 
 <div class="wrapper" style="padding-top:3%; min-height:5px; margin-bottom:min(5%);">
@@ -55,6 +56,7 @@ function showBOM_updateForm(node_id){
                                         <script type="text/javascript">
             var inputBlank = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".repeat({{ info.level }});
             document.write(inputBlank);
+
                                         </script>
                                         {% if info.level == 0 %}
                                         <a href="{% url 'metaData:endItem_detail' item.id %}" style="color:inherit;">
@@ -68,8 +70,12 @@ function showBOM_updateForm(node_id){
                                         </a>
                                         {% endif %}
                                     </td>
+
+                                    {% with result=endItem_produced|dictitem:end_item.id %}
+                                    {% if not result%}
                                     <td>
-                                        <a onclick="showBOM_appendForm({{info.node_id}},{{end_item.id}});" href="javascript:void(0)">Append</a>
+                                        <a onclick="showBOM_appendForm({{info.node_id}},{{end_item.id}});"
+                                           href="javascript:void(0)">Append</a>
                                     </td>
                                     <td>
                                         {% if info.level != 0 %}
@@ -80,8 +86,13 @@ function showBOM_updateForm(node_id){
                                         {% if info.level != 0 %}
                                         <a href="{% url 'metaData:bom_delete' info.node_id %}">Delete</a>
                                         {% endif %}
-
                                     </td>
+                                    {% else %}
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    {% endif %}
+                                    {% endwith %}
                                 </tr>
 
                                 {% endfor %}
@@ -170,14 +181,8 @@ btn_search.addEventListener(
 });
 
 
-
-
-
-
-
-
-
 </script>
+
 
 <!--search Form end-->
 {% endblock %}

@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load metaDataFilter %}
+{% if not user.is_authenticated %}
 <div class="wrapper">
     <div class="content" style="background-color:rgba(0, 0, 0, 0.4);">
         <p style="text-align:center; color: white;">
@@ -52,4 +54,10 @@
         </p>
     </div>
 </div>
+
+{% else %}
+<script>
+    window.location.href = '{%url 'metaData:endItemIndex' %}';
+</script>
+{% endif %}
 {% endblock %}
